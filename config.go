@@ -26,11 +26,11 @@ import (
 )
 
 const (
-	defaultConfigFilename    = "btcd.conf"
+	defaultConfigFilename    = "xcoind.conf"
 	defaultDataDirname       = "data"
 	defaultLogLevel          = "info"
 	defaultLogDirname        = "logs"
-	defaultLogFilename       = "btcd.log"
+	defaultLogFilename       = "xcoind.log"
 	defaultMaxPeers          = 125
 	defaultBanDuration       = time.Hour * 24
 	defaultMaxRPCClients     = 10
@@ -49,7 +49,7 @@ const (
 )
 
 var (
-	btcdHomeDir        = btcutil.AppDataDir("btcd", false)
+	btcdHomeDir        = btcutil.AppDataDir("xcoind", false)
 	defaultConfigFile  = filepath.Join(btcdHomeDir, defaultConfigFilename)
 	defaultDataDir     = filepath.Join(btcdHomeDir, defaultDataDirname)
 	knownDbTypes       = database.SupportedDBs()
@@ -71,7 +71,7 @@ func minUint32(a, b uint32) uint32 {
 	return b
 }
 
-// config defines the configuration options for btcd.
+// config defines the configuration options for xcoind.
 //
 // See loadConfig for details on the configuration load process.
 type config struct {
@@ -119,7 +119,7 @@ type config struct {
 	FreeTxRelayLimit   float64       `long:"limitfreerelay" description:"Limit relay of transactions with no transaction fee to the given amount in thousands of bytes per minute"`
 	NoRelayPriority    bool          `long:"norelaypriority" description:"Do not require free or low-fee transactions to have high priority for relaying"`
 	MaxOrphanTxs       int           `long:"maxorphantx" description:"Max number of orphan transactions to keep in memory"`
-	Generate           bool          `long:"generate" description:"Generate (mine) bitcoins using the CPU"`
+	Generate           bool          `long:"generate" description:"Generate (mine) xcoins using the CPU"`
 	MiningAddrs        []string      `long:"miningaddr" description:"Add the specified payment address to the list of addresses to use for generated blocks -- At least one address is required if the generate option is set"`
 	BlockMinSize       uint32        `long:"blockminsize" description:"Mininum block size in bytes to be used when creating a block"`
 	BlockMaxSize       uint32        `long:"blockmaxsize" description:"Maximum block size in bytes to be used when creating a block"`
@@ -137,7 +137,7 @@ type config struct {
 	minRelayTxFee      btcutil.Amount
 }
 
-// serviceOptions defines the configuration options for btcd as a service on
+// serviceOptions defines the configuration options for xcoind as a service on
 // Windows.
 type serviceOptions struct {
 	ServiceCommand string `short:"s" long:"service" description:"Service command {install, remove, start, stop}"`
@@ -314,7 +314,7 @@ func newConfigParser(cfg *config, so *serviceOptions, options flags.Options) *fl
 // 	3) Load configuration file overwriting defaults with any specified options
 // 	4) Parse CLI options and overwrite/add any specified options
 //
-// The above results in btcd functioning properly without any config settings
+// The above results in xcoind functioning properly without any config settings
 // while still allowing the user to override settings with config files and
 // command line options.  Command line options always take precedence.
 func loadConfig() (*config, []string, error) {

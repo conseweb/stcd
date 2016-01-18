@@ -437,7 +437,7 @@ func NewLockUnspentCmd(unlock bool, transactions []TransactionInput) *LockUnspen
 type MoveCmd struct {
 	FromAccount string
 	ToAccount   string
-	Amount      float64 // In BTC
+	Amount      float64 // In XCoin
 	MinConf     *int    `jsonrpcdefault:"1"`
 	Comment     *string
 }

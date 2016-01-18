@@ -455,7 +455,7 @@ Changes in 0.9.0 (Sat Sep 20 2014)
     - Accept --simnet flag which automatically selects the appropriate port
       and TLS certificates needed to communicate with btcd and btcwallet on
       the simulation test network
-    - Fix createrawtransaction command to send amounts denominated in BTC
+    - Fix createrawtransaction command to send amounts denominated in XCoin
     - Add estimatefee command
     - Add estimatepriority command
     - Add getmininginfo command
@@ -500,7 +500,7 @@ Changes in 0.9.0 (Sat Sep 20 2014)
     - General code cleanup and minor optimizations
 
 Changes in 0.8.0-beta (Sun May 25 2014)
-  - Btcd is now Beta (https://github.com/conformal/btcd/issues/130)
+  - XCoind is now Beta (https://github.com/conformal/btcd/issues/130)
   - Add a new checkpoint at block height 300255
   - Protocol and network related changes:
     - Lower the minimum transaction relay fee to 1000 satoshi to match

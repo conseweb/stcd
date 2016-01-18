@@ -25,20 +25,20 @@ func dirEmpty(dirPath string) (bool, error) {
 	return len(names) == 0, nil
 }
 
-// oldBtcdHomeDir returns the OS specific home directory btcd used prior to
+// oldBtcdHomeDir returns the OS specific home directory xcoind used prior to
 // version 0.3.3.  This has since been replaced with btcutil.AppDataDir, but
 // this function is still provided for the automatic upgrade path.
 func oldBtcdHomeDir() string {
 	// Search for Windows APPDATA first.  This won't exist on POSIX OSes.
 	appData := os.Getenv("APPDATA")
 	if appData != "" {
-		return filepath.Join(appData, "btcd")
+		return filepath.Join(appData, "xcoind")
 	}
 
 	// Fall back to standard HOME directory that works for most POSIX OSes.
 	home := os.Getenv("HOME")
 	if home != "" {
-		return filepath.Join(home, ".btcd")
+		return filepath.Join(home, ".xcoind")
 	}
 
 	// In the worst case, use the current directory.
@@ -93,9 +93,9 @@ func upgradeDBPaths() error {
 	// respective networks.  Check for the old database and update it to the
 	// new path introduced with version 0.2.0 accordingly.
 	oldDbRoot := filepath.Join(oldBtcdHomeDir(), "db")
-	upgradeDBPathNet(filepath.Join(oldDbRoot, "btcd.db"), "mainnet")
-	upgradeDBPathNet(filepath.Join(oldDbRoot, "btcd_testnet.db"), "testnet")
-	upgradeDBPathNet(filepath.Join(oldDbRoot, "btcd_regtest.db"), "regtest")
+	upgradeDBPathNet(filepath.Join(oldDbRoot, "xcoind.db"), "mainnet")
+	upgradeDBPathNet(filepath.Join(oldDbRoot, "xcoind_testnet.db"), "testnet")
+	upgradeDBPathNet(filepath.Join(oldDbRoot, "xcoind_regtest.db"), "regtest")
 
 	// Remove the old db directory.
 	err := os.RemoveAll(oldDbRoot)

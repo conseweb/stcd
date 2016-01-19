@@ -1612,7 +1612,7 @@ func loadBlockDB() (database.Db, error) {
 		return nil, err
 	}
 
-	// Insert the appropriate genesis block for the bitcoin network being
+	// Insert the appropriate genesis block for the xcoin network being
 	// connected to if needed.
 	if height == -1 {
 		genesis := btcutil.NewBlock(activeNetParams.GenesisBlock)

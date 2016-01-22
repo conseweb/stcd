@@ -17,7 +17,7 @@ def main():
   # hash merkle root is the double sha256 hash of the transaction(s) 
   tx = create_transaction(input_script, output_script)
   hash_merkle_root = hashlib.sha256(hashlib.sha256(tx).digest()).digest()
-  print_block_info(options, hash_merkle_root)
+  print_block_info(options, input_script, output_script, hash_merkle_root)
 
   block_header        = create_block_header(hash_merkle_root, options.time, bits, options.nonce)
   genesis_hash, nonce = generate_hash(block_header, options.scrypt, options.nonce, target)
@@ -55,7 +55,7 @@ def create_input_script(psz_timestamp):
 
 
 def create_output_script(pubkey):
-  script_len = '41'
+  script_len = '41'   # 65 bytes = 64 + 1
   OP_CHECKSIG = 'ac'
   return (script_len + pubkey + OP_CHECKSIG).decode('hex')
 
@@ -150,13 +150,15 @@ def calculate_hashrate(nonce, update_interval, difficulty, last_updated):
     return last_updated
 
 
-def print_block_info(options, hash_merkle_root):
+def print_block_info(options, ins, outs, hash_merkle_root):
   print "algorithm: "    + ("scrypt" if options.scrypt else "sha256")
   print "merkle hash: "  + hash_merkle_root[::-1].encode('hex_codec')
   print "pszTimestamp: " + options.timestamp
   print "pubkey: "       + options.pubkey
   print "time: "         + str(options.time)
   print "bits: "         + str(hex(get_bits(options)))
+  print "input script: " + ins.encode('hex')
+  print "output script: " + str(outs.encode('hex'))
 
 
 def announce_found_genesis(genesis_hash, nonce):

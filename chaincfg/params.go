@@ -101,7 +101,7 @@ type Params struct {
 var MainNetParams = Params{
 	Name:        "mainnet",
 	Net:         wire.MainNet,
-	DefaultPort: "8333",
+	DefaultPort: "6682",
 	DNSSeeds: []string{
 		"seed.bitcoin.sipa.be",
 		"dnsseed.bluematt.me",
@@ -224,7 +224,7 @@ var RegressionNetParams = Params{
 var TestNet3Params = Params{
 	Name:        "testnet3",
 	Net:         wire.TestNet3,
-	DefaultPort: "18333",
+	DefaultPort: "16682",
 	DNSSeeds: []string{
 		"testnet-seed.bitcoin.schildbach.de",
 		"testnet-seed.bitcoin.petertodd.org",

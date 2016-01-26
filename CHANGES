@@ -3,6 +3,9 @@ User visible changes for btcd
   A full-node bitcoin implementation written in Go
 ============================================================================
 
+Changes in 0.20.0 
+  - change p2p port from 8333 to 6682, rpc port from 8334 to 6684
+
 Changes in 0.12.0 (Fri Nov 20 2015)
   - Protocol and network related changes:
     - Add a new checkpoint at block height 382320 (#555)
@@ -915,7 +918,7 @@ Changes in 0.3.2 (Tue Oct 22 2013)
   - Remove deprecated sqlite as an available database backend
   - Close sqlite compile issue as sqlite has now been removed
     (https://github.com/conformal/btcd/issues/11)
-  - Change default RPC ports to 8334 (mainnet) and 18334 (testnet)
+  - Change default RPC ports to 6684 (mainnet) and 16684 (testnet)
   - Continue cleanup and work on implementing RPC API calls
   - Add support for the following RPC calls: getrawmempool,
     getbestblockhash, decoderawtransaction, getdifficulty,

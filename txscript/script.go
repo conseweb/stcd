@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/conseweb/stcd/wire"
+	"github.com/btcsuite/btcd/wire"
 )
 
 // Bip16Activation is the timestamp where BIP0016 is valid to use in the

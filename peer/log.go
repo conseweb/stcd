@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/btclog"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 )
 
 const (

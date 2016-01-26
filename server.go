@@ -19,6 +19,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/coinutil/bloom"
 	"github.com/conseweb/stcd/addrmgr"
@@ -28,7 +29,6 @@ import (
 	"github.com/conseweb/stcd/mining"
 	"github.com/conseweb/stcd/peer"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 )
 
 const (

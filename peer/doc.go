@@ -148,6 +148,6 @@ raw message bytes using a format similar to hexdump -C.
 Bitcoin Improvement Proposals
 
 This package supports all BIPS supported by the wire packge.
-(https://godoc.org/github.com/conseweb/stcd/wire#hdr-Bitcoin_Improvement_Proposals)
+(https://godoc.org/github.com/btcsuite/btcd/wire#hdr-Bitcoin_Improvement_Proposals)
 */
 package peer

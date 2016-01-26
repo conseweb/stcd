@@ -9,9 +9,9 @@ import (
 	"math"
 	"runtime"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 )
 
 // txValidateItem holds a transaction along with which input to validate.

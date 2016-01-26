@@ -7,8 +7,8 @@ package blockchain
 import (
 	"math"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
-	"github.com/conseweb/stcd/wire"
 )
 
 // nextPowerOfTwo returns the next highest power of two from a given number if

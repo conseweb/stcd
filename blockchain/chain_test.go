@@ -7,10 +7,10 @@ package blockchain_test
 import (
 	"testing"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/blockchain"
 	"github.com/conseweb/stcd/chaincfg"
-	"github.com/conseweb/stcd/wire"
 )
 
 // TestHaveBlock tests the HaveBlock API to ensure proper functionality.

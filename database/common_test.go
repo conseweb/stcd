@@ -14,12 +14,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/chaincfg"
 	"github.com/conseweb/stcd/database"
 	_ "github.com/conseweb/stcd/database/ldb"
 	_ "github.com/conseweb/stcd/database/memdb"
-	"github.com/conseweb/stcd/wire"
 )
 
 var (

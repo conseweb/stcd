@@ -10,10 +10,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/database"
 	_ "github.com/conseweb/stcd/database/ldb"
-	"github.com/conseweb/stcd/wire"
 )
 
 var tstBlocks []*coinutil.Block

@@ -7,10 +7,10 @@ package blockchain
 import (
 	"fmt"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/chaincfg"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 )
 
 // CheckpointConfirmations is the number of blocks before the end of the current

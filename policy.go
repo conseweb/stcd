@@ -7,10 +7,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/blockchain"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 )
 
 const (

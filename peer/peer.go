@@ -17,10 +17,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/go-socks/socks"
 	"github.com/conseweb/stcd/blockchain"
 	"github.com/conseweb/stcd/chaincfg"
-	"github.com/conseweb/stcd/wire"
 	"github.com/davecgh/go-spew/spew"
 )
 

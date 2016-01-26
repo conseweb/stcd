@@ -17,13 +17,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/fastsha256"
 	"github.com/conseweb/golangcrypto/ripemd160"
 	"github.com/conseweb/stcd/btcjson"
 	"github.com/conseweb/stcd/database"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 	"github.com/conseweb/websocket"
 )
 

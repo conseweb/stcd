@@ -27,6 +27,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/fastsha256"
 	"github.com/conseweb/stcd/blockchain"
@@ -36,7 +37,6 @@ import (
 	"github.com/conseweb/stcd/database"
 	"github.com/conseweb/stcd/mining"
 	"github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 	"github.com/conseweb/websocket"
 )
 

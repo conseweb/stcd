@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/conseweb/stcd/wire"
+	"github.com/btcsuite/btcd/wire"
 )
 
 // mruInventoryMap provides a concurrency safe map that is limited to a maximum

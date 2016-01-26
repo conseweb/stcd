@@ -15,9 +15,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	. "github.com/conseweb/stcd/txscript"
-	"github.com/conseweb/stcd/wire"
 )
 
 // testName returns a descriptive test name for the given reference test data.

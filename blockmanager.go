@@ -13,11 +13,11 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/blockchain"
 	"github.com/conseweb/stcd/chaincfg"
 	"github.com/conseweb/stcd/database"
-	"github.com/conseweb/stcd/wire"
 )
 
 const (

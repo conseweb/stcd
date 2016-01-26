@@ -5,8 +5,8 @@
 package main
 
 import (
+	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/stcd/blockchain"
-	"github.com/conseweb/stcd/wire"
 )
 
 // RuleError identifies a rule violation.  It is used to indicate that

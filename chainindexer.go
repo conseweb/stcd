@@ -11,12 +11,12 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/golangcrypto/ripemd160"
 	"github.com/conseweb/stcd/blockchain"
 	"github.com/conseweb/stcd/database"
 	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 type indexState int

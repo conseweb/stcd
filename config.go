@@ -16,13 +16,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	flags "github.com/conseweb/go-flags"
 	"github.com/conseweb/go-socks/socks"
 	"github.com/conseweb/stcd/database"
 	_ "github.com/conseweb/stcd/database/ldb"
 	_ "github.com/conseweb/stcd/database/memdb"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (

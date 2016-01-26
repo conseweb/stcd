@@ -9,12 +9,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	flags "github.com/conseweb/go-flags"
 	"github.com/conseweb/stcd/chaincfg"
 	"github.com/conseweb/stcd/database"
 	_ "github.com/conseweb/stcd/database/ldb"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (

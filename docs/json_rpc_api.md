@@ -1052,7 +1052,7 @@ package main
 import (
 	"github.com/conseweb/btcrpcclient"
 	"github.com/conseweb/coinutil"
-	"github.com/btcsuite/btcd/wire"
+	"github.com/conseweb/stcd/wire"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -1142,7 +1142,7 @@ package main
 import (
 	"github.com/conseweb/btcrpcclient"
 	"github.com/conseweb/coinutil"
-	"github.com/btcsuite/btcd/wire"
+	"github.com/conseweb/stcd/wire"
 	"io/ioutil"
 	"log"
 	"path/filepath"

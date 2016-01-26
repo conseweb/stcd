@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/btclog"
 	"github.com/conseweb/seelog"
 	"github.com/conseweb/stcd/addrmgr"
@@ -18,6 +17,7 @@ import (
 	"github.com/conseweb/stcd/database"
 	"github.com/conseweb/stcd/peer"
 	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (

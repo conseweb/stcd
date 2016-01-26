@@ -7,8 +7,8 @@ package blockchain
 import (
 	"fmt"
 
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/wire"
 )
 
 // BehaviorFlags is a bitmask defining tweaks to the normal behavior when
@@ -112,7 +112,7 @@ func (b *BlockChain) processOrphans(hash *wire.ShaHash, flags BehaviorFlags) err
 // It returns a bool which indicates whether or not the block is an orphan and
 // any errors that occurred during processing.  The returned bool is only valid
 // when the error is nil.
-func (b *BlockChain) ProcessBlock(block *btcutil.Block, timeSource MedianTimeSource, flags BehaviorFlags) (bool, error) {
+func (b *BlockChain) ProcessBlock(block *coinutil.Block, timeSource MedianTimeSource, flags BehaviorFlags) (bool, error) {
 	fastAdd := flags&BFFastAdd == BFFastAdd
 	dryRun := flags&BFDryRun == BFDryRun
 

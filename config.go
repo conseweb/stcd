@@ -16,21 +16,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ldb"
-	_ "github.com/btcsuite/btcd/database/memdb"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	flags "github.com/btcsuite/go-flags"
-	"github.com/btcsuite/go-socks/socks"
+	"github.com/conseweb/coinutil"
+	flags "github.com/conseweb/go-flags"
+	"github.com/conseweb/go-socks/socks"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/ldb"
+	_ "github.com/conseweb/stcd/database/memdb"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
-	defaultConfigFilename    = "xcoind.conf"
+	defaultConfigFilename    = "stcd.conf"
 	defaultDataDirname       = "data"
 	defaultLogLevel          = "info"
 	defaultLogDirname        = "logs"
-	defaultLogFilename       = "xcoind.log"
+	defaultLogFilename       = "stcd.log"
 	defaultMaxPeers          = 125
 	defaultBanDuration       = time.Hour * 24
 	defaultMaxRPCClients     = 10
@@ -49,7 +49,7 @@ const (
 )
 
 var (
-	btcdHomeDir        = btcutil.AppDataDir("xcoind", false)
+	btcdHomeDir        = coinutil.AppDataDir("Stcd", false)
 	defaultConfigFile  = filepath.Join(btcdHomeDir, defaultConfigFilename)
 	defaultDataDir     = filepath.Join(btcdHomeDir, defaultDataDirname)
 	knownDbTypes       = database.SupportedDBs()
@@ -133,8 +133,8 @@ type config struct {
 	lookup             func(string) ([]net.IP, error)
 	oniondial          func(string, string) (net.Conn, error)
 	dial               func(string, string) (net.Conn, error)
-	miningAddrs        []btcutil.Address
-	minRelayTxFee      btcutil.Amount
+	miningAddrs        []coinutil.Address
+	minRelayTxFee      coinutil.Amount
 }
 
 // serviceOptions defines the configuration options for xcoind as a service on
@@ -607,7 +607,7 @@ func loadConfig() (*config, []string, error) {
 	}
 
 	// Validate the the minrelaytxfee.
-	cfg.minRelayTxFee, err = btcutil.NewAmount(cfg.MinRelayTxFee)
+	cfg.minRelayTxFee, err = coinutil.NewAmount(cfg.MinRelayTxFee)
 	if err != nil {
 		str := "%s: invalid minrelaytxfee: %v"
 		err := fmt.Errorf(str, funcName, err)
@@ -644,10 +644,10 @@ func loadConfig() (*config, []string, error) {
 	cfg.BlockMinSize = minUint32(cfg.BlockMinSize, cfg.BlockMaxSize)
 
 	// Check getwork keys are valid and saved parsed versions.
-	cfg.miningAddrs = make([]btcutil.Address, 0, len(cfg.GetWorkKeys)+
+	cfg.miningAddrs = make([]coinutil.Address, 0, len(cfg.GetWorkKeys)+
 		len(cfg.MiningAddrs))
 	for _, strAddr := range cfg.GetWorkKeys {
-		addr, err := btcutil.DecodeAddress(strAddr,
+		addr, err := coinutil.DecodeAddress(strAddr,
 			activeNetParams.Params)
 		if err != nil {
 			str := "%s: getworkkey '%s' failed to decode: %v"
@@ -668,7 +668,7 @@ func loadConfig() (*config, []string, error) {
 
 	// Check mining addresses are valid and saved parsed versions.
 	for _, strAddr := range cfg.MiningAddrs {
-		addr, err := btcutil.DecodeAddress(strAddr, activeNetParams.Params)
+		addr, err := coinutil.DecodeAddress(strAddr, activeNetParams.Params)
 		if err != nil {
 			str := "%s: mining address '%s' failed to decode: %v"
 			err := fmt.Errorf(str, funcName, strAddr, err)

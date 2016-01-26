@@ -13,8 +13,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/wire"
 )
 
 // testReorganization performs reorganization tests for the passed DB type.
@@ -99,12 +99,12 @@ func testReorganization(t *testing.T, dbType string) {
 
 // loadReorgBlocks reads files containing bitcoin block data (bzipped but
 // otherwise in the format bitcoind writes) from disk and returns them as an
-// array of btcutil.Block. This is copied from the blockchain package, which
+// array of coinutil.Block. This is copied from the blockchain package, which
 // itself largely borrowed it from the test code in this package.
-func loadReorgBlocks(filename string) ([]*btcutil.Block, error) {
+func loadReorgBlocks(filename string) ([]*coinutil.Block, error) {
 	filename = filepath.Join("testdata/", filename)
 
-	var blocks []*btcutil.Block
+	var blocks []*coinutil.Block
 	var err error
 
 	var network = wire.SimNet
@@ -123,7 +123,7 @@ func loadReorgBlocks(filename string) ([]*btcutil.Block, error) {
 	}
 	defer fi.Close()
 
-	var block *btcutil.Block
+	var block *coinutil.Block
 
 	err = nil
 	for height := int32(1); err == nil; height++ {
@@ -158,7 +158,7 @@ func loadReorgBlocks(filename string) ([]*btcutil.Block, error) {
 			return blocks, io.ErrUnexpectedEOF
 		}
 
-		block, err = btcutil.NewBlockFromBytes(rbytes)
+		block, err = coinutil.NewBlockFromBytes(rbytes)
 		if err != nil {
 			return blocks, err
 		}

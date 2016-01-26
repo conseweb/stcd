@@ -11,9 +11,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/btcsuite/btcd/btcjson"
-	"github.com/btcsuite/btcutil"
-	flags "github.com/btcsuite/go-flags"
+	"github.com/conseweb/coinutil"
+	flags "github.com/conseweb/go-flags"
+	"github.com/conseweb/stcd/btcjson"
 )
 
 const (
@@ -24,9 +24,9 @@ const (
 )
 
 var (
-	btcdHomeDir           = btcutil.AppDataDir("xcoind", false)
-	btcctlHomeDir         = btcutil.AppDataDir("xcoinctl", false)
-	btcwalletHomeDir      = btcutil.AppDataDir("xcoinwallet", false)
+	btcdHomeDir           = coinutil.AppDataDir("xcoind", false)
+	btcctlHomeDir         = coinutil.AppDataDir("xcoinctl", false)
+	btcwalletHomeDir      = coinutil.AppDataDir("xcoinwallet", false)
 	defaultConfigFile     = filepath.Join(btcctlHomeDir, "xcoinctl.conf")
 	defaultRPCServer      = "localhost"
 	defaultRPCCertFile    = filepath.Join(btcdHomeDir, "rpc.cert")

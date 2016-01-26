@@ -7,15 +7,15 @@ package mining
 import (
 	"time"
 
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/wire"
 )
 
 // TxDesc is a descriptor about a transaction in a transaction source along with
 // additional metadata.
 type TxDesc struct {
 	// Tx is the transaction associated with the entry.
-	Tx *btcutil.Tx
+	Tx *coinutil.Tx
 
 	// Added is the time when the entry was added to the source pool.
 	Added time.Time

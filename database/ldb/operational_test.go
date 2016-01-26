@@ -14,12 +14,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/golangcrypto/ripemd160"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/golangcrypto/ripemd160"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 var network = wire.MainNet
@@ -29,7 +29,7 @@ var network = wire.MainNet
 // consistency across tests.
 type testDb struct {
 	db          database.Db
-	blocks      []*btcutil.Block
+	blocks      []*coinutil.Block
 	dbName      string
 	dbNameVer   string
 	cleanUpFunc func()
@@ -72,7 +72,7 @@ func TestOperational(t *testing.T) {
 
 // testAddrIndexOperations ensures that all normal operations concerning
 // the optional address index function correctly.
-func testAddrIndexOperations(t *testing.T, db database.Db, newestBlock *btcutil.Block, newestSha *wire.ShaHash, newestBlockIdx int32) {
+func testAddrIndexOperations(t *testing.T, db database.Db, newestBlock *coinutil.Block, newestSha *wire.ShaHash, newestBlockIdx int32) {
 	// Metadata about the current addr index state should be unset.
 	sha, height, err := db.FetchAddrIndexTip()
 	if err != database.ErrAddrIndexDoesNotExist {
@@ -90,7 +90,7 @@ func testAddrIndexOperations(t *testing.T, db database.Db, newestBlock *btcutil.
 	}
 
 	// Test enforcement of constraints for "limit" and "skip"
-	var fakeAddr btcutil.Address
+	var fakeAddr coinutil.Address
 	_, _, err = db.FetchTxsForAddr(fakeAddr, -1, 0, false)
 	if err == nil {
 		t.Fatalf("Negative value for skip passed, should return an error")
@@ -117,7 +117,7 @@ func testAddrIndexOperations(t *testing.T, db database.Db, newestBlock *btcutil.
 
 	// Extract the hash160 from the output script.
 	var hash160Bytes [ripemd160.Size]byte
-	testHash160 := testAddrs[0].(*btcutil.AddressPubKey).AddressPubKeyHash().ScriptAddress()
+	testHash160 := testAddrs[0].(*coinutil.AddressPubKey).AddressPubKeyHash().ScriptAddress()
 	copy(hash160Bytes[:], testHash160[:])
 
 	// Create a fake index.
@@ -383,9 +383,9 @@ func testBackout(t *testing.T) {
 	}
 }
 
-var savedblocks []*btcutil.Block
+var savedblocks []*coinutil.Block
 
-func loadBlocks(t *testing.T, file string) (blocks []*btcutil.Block, err error) {
+func loadBlocks(t *testing.T, file string) (blocks []*coinutil.Block, err error) {
 	if len(savedblocks) != 0 {
 		blocks = savedblocks
 		return
@@ -412,10 +412,10 @@ func loadBlocks(t *testing.T, file string) (blocks []*btcutil.Block, err error) 
 	}()
 
 	// Set the first block as the genesis block.
-	genesis := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	genesis := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	blocks = append(blocks, genesis)
 
-	var block *btcutil.Block
+	var block *coinutil.Block
 	err = nil
 	for height := int32(1); err == nil; height++ {
 		var rintbuf uint32
@@ -443,7 +443,7 @@ func loadBlocks(t *testing.T, file string) (blocks []*btcutil.Block, err error) 
 		// read block
 		dr.Read(rbytes)
 
-		block, err = btcutil.NewBlockFromBytes(rbytes)
+		block, err = coinutil.NewBlockFromBytes(rbytes)
 		if err != nil {
 			t.Errorf("failed to parse block %v", height)
 			return
@@ -454,7 +454,7 @@ func loadBlocks(t *testing.T, file string) (blocks []*btcutil.Block, err error) 
 	return
 }
 
-func testFetchHeightRange(t *testing.T, db database.Db, blocks []*btcutil.Block) {
+func testFetchHeightRange(t *testing.T, db database.Db, blocks []*coinutil.Block) {
 
 	var testincrement int32 = 50
 	var testcnt int32 = 100
@@ -511,7 +511,7 @@ func TestLimitAndSkipFetchTxsForAddr(t *testing.T) {
 	// Insert a block with some fake test transactions. The block will have
 	// 10 copies of a fake transaction involving same address.
 	addrString := "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
-	targetAddr, err := btcutil.DecodeAddress(addrString, &chaincfg.MainNetParams)
+	targetAddr, err := coinutil.DecodeAddress(addrString, &chaincfg.MainNetParams)
 	if err != nil {
 		t.Fatalf("Unable to decode test address: %v", err)
 	}
@@ -530,7 +530,7 @@ func TestLimitAndSkipFetchTxsForAddr(t *testing.T) {
 	}
 
 	// Insert the test block into the DB.
-	testBlock := btcutil.NewBlock(msgBlock)
+	testBlock := coinutil.NewBlock(msgBlock)
 	newheight, err := testDb.db.InsertBlock(testBlock)
 	if err != nil {
 		t.Fatalf("Unable to insert block into db: %v", err)

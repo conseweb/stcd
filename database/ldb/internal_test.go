@@ -9,15 +9,15 @@ import (
 
 	"testing"
 
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/golangcrypto/ripemd160"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/golangcrypto/ripemd160"
 )
 
 func TestAddrIndexKeySerialization(t *testing.T) {
 	var hash160Bytes [ripemd160.Size]byte
 	var packedIndex [12]byte
 
-	fakeHash160 := btcutil.Hash160([]byte("testing"))
+	fakeHash160 := coinutil.Hash160([]byte("testing"))
 	copy(fakeHash160, hash160Bytes[:])
 
 	fakeIndex := txAddrIndex{

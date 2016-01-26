@@ -13,11 +13,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -45,7 +45,7 @@ type newPeerMsg struct {
 // blockMsg packages a bitcoin block message and the peer it came from together
 // so the block handler has access to that information.
 type blockMsg struct {
-	block *btcutil.Block
+	block *coinutil.Block
 	peer  *serverPeer
 }
 
@@ -71,7 +71,7 @@ type donePeerMsg struct {
 // txMsg packages a bitcoin tx message and the peer it came from together
 // so the block handler has access to that information.
 type txMsg struct {
-	tx   *btcutil.Tx
+	tx   *coinutil.Tx
 	peer *serverPeer
 }
 
@@ -85,7 +85,7 @@ type getSyncPeerMsg struct {
 // for requesting chain to check if a block connects to the end of the current
 // main chain.
 type checkConnectBlockMsg struct {
-	block *btcutil.Block
+	block *coinutil.Block
 	reply chan error
 }
 
@@ -120,7 +120,7 @@ type fetchTransactionStoreResponse struct {
 // fetchTransactionStoreMsg is a message type to be sent across the message
 // channel fetching the tx input store for some Tx.
 type fetchTransactionStoreMsg struct {
-	tx    *btcutil.Tx
+	tx    *coinutil.Tx
 	reply chan fetchTransactionStoreResponse
 }
 
@@ -130,7 +130,7 @@ type fetchTransactionStoreMsg struct {
 // extra handling whereas this message essentially is just a concurrent safe
 // way to call ProcessBlock on the internal block chain instance.
 type processBlockMsg struct {
-	block *btcutil.Block
+	block *coinutil.Block
 	flags blockchain.BehaviorFlags
 	reply chan processBlockResponse
 }
@@ -1193,7 +1193,7 @@ func (b *blockManager) handleNotifyMsg(notification *blockchain.Notification) {
 			return
 		}
 
-		block, ok := notification.Data.(*btcutil.Block)
+		block, ok := notification.Data.(*coinutil.Block)
 		if !ok {
 			bmgrLog.Warnf("Chain accepted notification is not a block.")
 			break
@@ -1205,7 +1205,7 @@ func (b *blockManager) handleNotifyMsg(notification *blockchain.Notification) {
 
 	// A block has been connected to the main block chain.
 	case blockchain.NTBlockConnected:
-		block, ok := notification.Data.(*btcutil.Block)
+		block, ok := notification.Data.(*coinutil.Block)
 		if !ok {
 			bmgrLog.Warnf("Chain connected notification is not a block.")
 			break
@@ -1246,7 +1246,7 @@ func (b *blockManager) handleNotifyMsg(notification *blockchain.Notification) {
 
 	// A block has been disconnected from the main block chain.
 	case blockchain.NTBlockDisconnected:
-		block, ok := notification.Data.(*btcutil.Block)
+		block, ok := notification.Data.(*coinutil.Block)
 		if !ok {
 			bmgrLog.Warnf("Chain disconnected notification is not a block.")
 			break
@@ -1283,7 +1283,7 @@ func (b *blockManager) NewPeer(sp *serverPeer) {
 
 // QueueTx adds the passed transaction message and peer to the block handling
 // queue.
-func (b *blockManager) QueueTx(tx *btcutil.Tx, sp *serverPeer) {
+func (b *blockManager) QueueTx(tx *coinutil.Tx, sp *serverPeer) {
 	// Don't accept more transactions if we're shutting down.
 	if atomic.LoadInt32(&b.shutdown) != 0 {
 		sp.txProcessed <- struct{}{}
@@ -1294,7 +1294,7 @@ func (b *blockManager) QueueTx(tx *btcutil.Tx, sp *serverPeer) {
 }
 
 // QueueBlock adds the passed block message and peer to the block handling queue.
-func (b *blockManager) QueueBlock(block *btcutil.Block, sp *serverPeer) {
+func (b *blockManager) QueueBlock(block *coinutil.Block, sp *serverPeer) {
 	// Don't accept more blocks if we're shutting down.
 	if atomic.LoadInt32(&b.shutdown) != 0 {
 		sp.blockProcessed <- struct{}{}
@@ -1375,7 +1375,7 @@ func (b *blockManager) SyncPeer() *serverPeer {
 // block to the main chain does not violate any rules.  This function makes use
 // of CheckConnectBlock on an internal instance of a block chain.  It is funneled
 // through the block manager since btcchain is not safe for concurrent access.
-func (b *blockManager) CheckConnectBlock(block *btcutil.Block) error {
+func (b *blockManager) CheckConnectBlock(block *coinutil.Block) error {
 	reply := make(chan error)
 	b.msgChan <- checkConnectBlockMsg{block: block, reply: reply}
 	return <-reply
@@ -1395,7 +1395,7 @@ func (b *blockManager) CalcNextRequiredDifficulty(timestamp time.Time) (uint32, 
 
 // FetchTransactionStore makes use of FetchTransactionStore on an internal
 // instance of a block chain. It is safe for concurrent access.
-func (b *blockManager) FetchTransactionStore(tx *btcutil.Tx) (blockchain.TxStore, error) {
+func (b *blockManager) FetchTransactionStore(tx *coinutil.Tx) (blockchain.TxStore, error) {
 	reply := make(chan fetchTransactionStoreResponse, 1)
 	b.msgChan <- fetchTransactionStoreMsg{tx: tx, reply: reply}
 	response := <-reply
@@ -1405,7 +1405,7 @@ func (b *blockManager) FetchTransactionStore(tx *btcutil.Tx) (blockchain.TxStore
 // ProcessBlock makes use of ProcessBlock on an internal instance of a block
 // chain.  It is funneled through the block manager since btcchain is not safe
 // for concurrent access.
-func (b *blockManager) ProcessBlock(block *btcutil.Block, flags blockchain.BehaviorFlags) (bool, error) {
+func (b *blockManager) ProcessBlock(block *coinutil.Block, flags blockchain.BehaviorFlags) (bool, error) {
 	reply := make(chan processBlockResponse, 1)
 	b.msgChan <- processBlockMsg{block: block, flags: flags, reply: reply}
 	response := <-reply
@@ -1615,7 +1615,7 @@ func loadBlockDB() (database.Db, error) {
 	// Insert the appropriate genesis block for the xcoin network being
 	// connected to if needed.
 	if height == -1 {
-		genesis := btcutil.NewBlock(activeNetParams.GenesisBlock)
+		genesis := coinutil.NewBlock(activeNetParams.GenesisBlock)
 		_, err := db.InsertBlock(genesis)
 		if err != nil {
 			db.Close()

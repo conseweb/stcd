@@ -9,16 +9,16 @@ import (
 	"math"
 	"runtime"
 
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 // txValidateItem holds a transaction along with which input to validate.
 type txValidateItem struct {
 	txInIndex int
 	txIn      *wire.TxIn
-	tx        *btcutil.Tx
+	tx        *coinutil.Tx
 }
 
 // txValidator provides a type which asynchronously validates transaction
@@ -193,7 +193,7 @@ func newTxValidator(txStore TxStore, flags txscript.ScriptFlags, sigCache *txscr
 
 // ValidateTransactionScripts validates the scripts for the passed transaction
 // using multiple goroutines.
-func ValidateTransactionScripts(tx *btcutil.Tx, txStore TxStore, flags txscript.ScriptFlags, sigCache *txscript.SigCache) error {
+func ValidateTransactionScripts(tx *coinutil.Tx, txStore TxStore, flags txscript.ScriptFlags, sigCache *txscript.SigCache) error {
 	// Collect all of the transaction inputs and required information for
 	// validation.
 	txIns := tx.MsgTx().TxIn
@@ -223,7 +223,7 @@ func ValidateTransactionScripts(tx *btcutil.Tx, txStore TxStore, flags txscript.
 
 // checkBlockScripts executes and validates the scripts for all transactions in
 // the passed block.
-func checkBlockScripts(block *btcutil.Block, txStore TxStore,
+func checkBlockScripts(block *coinutil.Block, txStore TxStore,
 	scriptFlags txscript.ScriptFlags, sigCache *txscript.SigCache) error {
 
 	// Collect all of the transaction inputs and required information for

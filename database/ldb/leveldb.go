@@ -11,12 +11,12 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btclog"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/goleveldb/leveldb"
-	"github.com/btcsuite/goleveldb/leveldb/opt"
+	"github.com/conseweb/btclog"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/goleveldb/leveldb"
+	"github.com/conseweb/goleveldb/leveldb/opt"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -322,12 +322,12 @@ func (db *LevelDb) DropAfterBlockBySha(sha *wire.ShaHash) (rerr error) {
 	}
 
 	for height := startheight; height > keepidx; height = height - 1 {
-		var blk *btcutil.Block
+		var blk *coinutil.Block
 		blksha, buf, err := db.getBlkByHeight(height)
 		if err != nil {
 			return err
 		}
-		blk, err = btcutil.NewBlockFromBytes(buf)
+		blk, err = coinutil.NewBlockFromBytes(buf)
 		if err != nil {
 			return err
 		}
@@ -361,7 +361,7 @@ func (db *LevelDb) DropAfterBlockBySha(sha *wire.ShaHash) (rerr error) {
 // database.  The first block inserted into the database will be treated as the
 // genesis block.  Every subsequent block insert requires the referenced parent
 // block to already exist.
-func (db *LevelDb) InsertBlock(block *btcutil.Block) (height int32, rerr error) {
+func (db *LevelDb) InsertBlock(block *coinutil.Block) (height int32, rerr error) {
 	db.dbLock.Lock()
 	defer db.dbLock.Unlock()
 	defer func() {

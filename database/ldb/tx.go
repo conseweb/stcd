@@ -9,13 +9,13 @@ import (
 	"encoding/binary"
 	"errors"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/golangcrypto/ripemd160"
-	"github.com/btcsuite/goleveldb/leveldb"
-	"github.com/btcsuite/goleveldb/leveldb/iterator"
-	"github.com/btcsuite/goleveldb/leveldb/util"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/golangcrypto/ripemd160"
+	"github.com/conseweb/goleveldb/leveldb"
+	"github.com/conseweb/goleveldb/leveldb/iterator"
+	"github.com/conseweb/goleveldb/leveldb/util"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -437,7 +437,7 @@ func advanceIterator(iter iterator.IteratorSeeker, reverse bool) bool {
 // should be the max number of transactions to be returned. Additionally, if the
 // caller wishes to seek forward in the results some amount, the 'seek'
 // represents how many results to skip.
-func (db *LevelDb) FetchTxsForAddr(addr btcutil.Address, skip int,
+func (db *LevelDb) FetchTxsForAddr(addr coinutil.Address, skip int,
 	limit int, reverse bool) ([]*database.TxListReply, int, error) {
 	db.dbLock.Lock()
 	defer db.dbLock.Unlock()
@@ -453,13 +453,13 @@ func (db *LevelDb) FetchTxsForAddr(addr btcutil.Address, skip int,
 	// Parse address type, bailing on an unknown type.
 	var addrKey []byte
 	switch addr := addr.(type) {
-	case *btcutil.AddressPubKeyHash:
+	case *coinutil.AddressPubKeyHash:
 		hash160 := addr.Hash160()
 		addrKey = hash160[:]
-	case *btcutil.AddressScriptHash:
+	case *coinutil.AddressScriptHash:
 		hash160 := addr.Hash160()
 		addrKey = hash160[:]
-	case *btcutil.AddressPubKey:
+	case *coinutil.AddressPubKey:
 		hash160 := addr.AddressPubKeyHash().Hash160()
 		addrKey = hash160[:]
 	default:

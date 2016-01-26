@@ -13,12 +13,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/mining"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/mining"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -62,7 +62,7 @@ type mempoolConfig struct {
 
 	// FetchTransactionStore defines the function to use to fetch
 	// transacation information.
-	FetchTransactionStore func(*btcutil.Tx, bool) (blockchain.TxStore, error)
+	FetchTransactionStore func(*coinutil.Tx, bool) (blockchain.TxStore, error)
 
 	// FreeTxRelayLimit defines the given amount in thousands of bytes
 	// per minute that transactions with no fee are rate limited to.
@@ -74,14 +74,14 @@ type mempoolConfig struct {
 
 	// MinRelayTxFee defines the minimum transaction fee in BTC/kB to be
 	// considered a non-zero fee.
-	MinRelayTxFee btcutil.Amount
+	MinRelayTxFee coinutil.Amount
 
 	// NewestSha defines the function to retrieve the newest sha
 	NewestSha func() (*wire.ShaHash, int32, error)
 
 	// RelayNtfnChan defines the channel to send newly accepted transactions
 	// to.  If unset or set to nil, notifications will not be sent.
-	RelayNtfnChan chan *btcutil.Tx
+	RelayNtfnChan chan *coinutil.Tx
 
 	// SigCache defines a signature cache to use.
 	SigCache *txscript.SigCache
@@ -97,10 +97,10 @@ type txMemPool struct {
 	sync.RWMutex
 	cfg           mempoolConfig
 	pool          map[wire.ShaHash]*mempoolTxDesc
-	orphans       map[wire.ShaHash]*btcutil.Tx
-	orphansByPrev map[wire.ShaHash]map[wire.ShaHash]*btcutil.Tx
+	orphans       map[wire.ShaHash]*coinutil.Tx
+	orphansByPrev map[wire.ShaHash]map[wire.ShaHash]*coinutil.Tx
 	addrindex     map[string]map[wire.ShaHash]struct{} // maps address to txs
-	outpoints     map[wire.OutPoint]*btcutil.Tx
+	outpoints     map[wire.OutPoint]*coinutil.Tx
 	lastUpdated   time.Time // last time pool was updated
 	pennyTotal    float64   // exponentially decaying total for penny spends.
 	lastPennyUnix int64     // unix time of last ``penny spend''
@@ -188,7 +188,7 @@ func (mp *txMemPool) limitNumOrphans() error {
 // addOrphan adds an orphan transaction to the orphan pool.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) addOrphan(tx *btcutil.Tx) {
+func (mp *txMemPool) addOrphan(tx *coinutil.Tx) {
 	// Limit the number orphan transactions to prevent memory exhaustion.  A
 	// random orphan is evicted to make room if needed.
 	mp.limitNumOrphans()
@@ -198,7 +198,7 @@ func (mp *txMemPool) addOrphan(tx *btcutil.Tx) {
 		originTxHash := txIn.PreviousOutPoint.Hash
 		if _, exists := mp.orphansByPrev[originTxHash]; !exists {
 			mp.orphansByPrev[originTxHash] =
-				make(map[wire.ShaHash]*btcutil.Tx)
+				make(map[wire.ShaHash]*coinutil.Tx)
 		}
 		mp.orphansByPrev[originTxHash][*tx.Sha()] = tx
 	}
@@ -210,7 +210,7 @@ func (mp *txMemPool) addOrphan(tx *btcutil.Tx) {
 // maybeAddOrphan potentially adds an orphan to the orphan pool.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) maybeAddOrphan(tx *btcutil.Tx) error {
+func (mp *txMemPool) maybeAddOrphan(tx *coinutil.Tx) error {
 	// Ignore orphan transactions that are too large.  This helps avoid
 	// a memory exhaustion attack based on sending a lot of really large
 	// orphans.  In the case there is a valid transaction larger than this,
@@ -307,7 +307,7 @@ func (mp *txMemPool) HaveTransaction(hash *wire.ShaHash) bool {
 // RemoveTransaction.  See the comment for RemoveTransaction for more details.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) removeTransaction(tx *btcutil.Tx, removeRedeemers bool) {
+func (mp *txMemPool) removeTransaction(tx *coinutil.Tx, removeRedeemers bool) {
 	txHash := tx.Sha()
 	if removeRedeemers {
 		// Remove any transactions which rely on this one.
@@ -339,7 +339,7 @@ func (mp *txMemPool) removeTransaction(tx *btcutil.Tx, removeRedeemers bool) {
 // address based index.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) removeTransactionFromAddrIndex(tx *btcutil.Tx) error {
+func (mp *txMemPool) removeTransactionFromAddrIndex(tx *coinutil.Tx) error {
 	previousOutputScripts, err := mp.fetchReferencedOutputScripts(tx)
 	if err != nil {
 		txmpLog.Errorf("Unable to obtain referenced output scripts for "+
@@ -362,7 +362,7 @@ func (mp *txMemPool) removeTransactionFromAddrIndex(tx *btcutil.Tx) error {
 // passed pkScript from the passed tx in our address based tx index.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) removeScriptFromAddrIndex(pkScript []byte, tx *btcutil.Tx) error {
+func (mp *txMemPool) removeScriptFromAddrIndex(pkScript []byte, tx *coinutil.Tx) error {
 	_, addresses, _, err := txscript.ExtractPkScriptAddrs(pkScript,
 		activeNetParams.Params)
 	if err != nil {
@@ -383,7 +383,7 @@ func (mp *txMemPool) removeScriptFromAddrIndex(pkScript []byte, tx *btcutil.Tx) 
 // they would otherwise become orphan.
 //
 // This function is safe for concurrent access.
-func (mp *txMemPool) RemoveTransaction(tx *btcutil.Tx, removeRedeemers bool) {
+func (mp *txMemPool) RemoveTransaction(tx *coinutil.Tx, removeRedeemers bool) {
 	// Protect concurrent access.
 	mp.Lock()
 	defer mp.Unlock()
@@ -398,7 +398,7 @@ func (mp *txMemPool) RemoveTransaction(tx *btcutil.Tx, removeRedeemers bool) {
 // contain transactions which were previously unknown to the memory pool
 //
 // This function is safe for concurrent access.
-func (mp *txMemPool) RemoveDoubleSpends(tx *btcutil.Tx) {
+func (mp *txMemPool) RemoveDoubleSpends(tx *coinutil.Tx) {
 	// Protect concurrent access.
 	mp.Lock()
 	defer mp.Unlock()
@@ -417,7 +417,7 @@ func (mp *txMemPool) RemoveDoubleSpends(tx *btcutil.Tx) {
 // helper for maybeAcceptTransaction.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) addTransaction(txStore blockchain.TxStore, tx *btcutil.Tx, height int32, fee int64) {
+func (mp *txMemPool) addTransaction(txStore blockchain.TxStore, tx *coinutil.Tx, height int32, fee int64) {
 	// Add the transaction to the pool and mark the referenced outpoints
 	// as spent by the pool.
 	mp.pool[*tx.Sha()] = &mempoolTxDesc{
@@ -444,7 +444,7 @@ func (mp *txMemPool) addTransaction(txStore blockchain.TxStore, tx *btcutil.Tx, 
 // we're running with the optional address index activated.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) addTransactionToAddrIndex(tx *btcutil.Tx) error {
+func (mp *txMemPool) addTransactionToAddrIndex(tx *coinutil.Tx) error {
 	previousOutScripts, err := mp.fetchReferencedOutputScripts(tx)
 	if err != nil {
 		txmpLog.Errorf("Unable to obtain referenced output scripts for "+
@@ -468,7 +468,7 @@ func (mp *txMemPool) addTransactionToAddrIndex(tx *btcutil.Tx) error {
 // referenced by inputs of the passed transaction.
 //
 // This function MUST be called with the mempool lock held (for reads).
-func (mp *txMemPool) fetchReferencedOutputScripts(tx *btcutil.Tx) ([][]byte, error) {
+func (mp *txMemPool) fetchReferencedOutputScripts(tx *coinutil.Tx) ([][]byte, error) {
 	txStore, err := mp.fetchInputTransactions(tx, false)
 	if err != nil || len(txStore) == 0 {
 		return nil, err
@@ -489,7 +489,7 @@ func (mp *txMemPool) fetchReferencedOutputScripts(tx *btcutil.Tx) ([][]byte, err
 // encoded by the passed scriptPubKey to the passed transaction.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) indexScriptAddressToTx(pkScript []byte, tx *btcutil.Tx) error {
+func (mp *txMemPool) indexScriptAddressToTx(pkScript []byte, tx *coinutil.Tx) error {
 	_, addresses, _, err := txscript.ExtractPkScriptAddrs(pkScript,
 		activeNetParams.Params)
 	if err != nil {
@@ -514,7 +514,7 @@ func (mp *txMemPool) indexScriptAddressToTx(pkScript []byte, tx *btcutil.Tx) err
 // main chain.
 //
 // This function MUST be called with the mempool lock held (for reads).
-func (mp *txMemPool) checkPoolDoubleSpend(tx *btcutil.Tx) error {
+func (mp *txMemPool) checkPoolDoubleSpend(tx *coinutil.Tx) error {
 	for _, txIn := range tx.MsgTx().TxIn {
 		if txR, exists := mp.outpoints[txIn.PreviousOutPoint]; exists {
 			str := fmt.Sprintf("output %v already spent by "+
@@ -532,7 +532,7 @@ func (mp *txMemPool) checkPoolDoubleSpend(tx *btcutil.Tx) error {
 // fetch any missing inputs from the transaction pool.
 //
 // This function MUST be called with the mempool lock held (for reads).
-func (mp *txMemPool) fetchInputTransactions(tx *btcutil.Tx, includeSpent bool) (blockchain.TxStore, error) {
+func (mp *txMemPool) fetchInputTransactions(tx *coinutil.Tx, includeSpent bool) (blockchain.TxStore, error) {
 	txStore, err := mp.cfg.FetchTransactionStore(tx, includeSpent)
 	if err != nil {
 		return nil, err
@@ -559,7 +559,7 @@ func (mp *txMemPool) fetchInputTransactions(tx *btcutil.Tx, includeSpent bool) (
 // orphans.
 //
 // This function is safe for concurrent access.
-func (mp *txMemPool) FetchTransaction(txHash *wire.ShaHash) (*btcutil.Tx, error) {
+func (mp *txMemPool) FetchTransaction(txHash *wire.ShaHash) (*coinutil.Tx, error) {
 	// Protect concurrent access.
 	mp.RLock()
 	defer mp.RUnlock()
@@ -574,13 +574,13 @@ func (mp *txMemPool) FetchTransaction(txHash *wire.ShaHash) (*btcutil.Tx, error)
 // FilterTransactionsByAddress returns all transactions currently in the
 // mempool that either create an output to the passed address or spend a
 // previously created ouput to the address.
-func (mp *txMemPool) FilterTransactionsByAddress(addr btcutil.Address) ([]*btcutil.Tx, error) {
+func (mp *txMemPool) FilterTransactionsByAddress(addr coinutil.Address) ([]*coinutil.Tx, error) {
 	// Protect concurrent access.
 	mp.RLock()
 	defer mp.RUnlock()
 
 	if txs, exists := mp.addrindex[addr.EncodeAddress()]; exists {
-		addressTxs := make([]*btcutil.Tx, 0, len(txs))
+		addressTxs := make([]*coinutil.Tx, 0, len(txs))
 		for txHash := range txs {
 			if txD, exists := mp.pool[txHash]; exists {
 				addressTxs = append(addressTxs, txD.Tx)
@@ -597,7 +597,7 @@ func (mp *txMemPool) FilterTransactionsByAddress(addr btcutil.Address) ([]*btcut
 // more details.
 //
 // This function MUST be called with the mempool lock held (for writes).
-func (mp *txMemPool) maybeAcceptTransaction(tx *btcutil.Tx, isNew, rateLimit bool) ([]*wire.ShaHash, error) {
+func (mp *txMemPool) maybeAcceptTransaction(tx *coinutil.Tx, isNew, rateLimit bool) ([]*wire.ShaHash, error) {
 	txHash := tx.Sha()
 
 	// Don't accept the transaction if it already exists in the pool.  This
@@ -860,7 +860,7 @@ func (mp *txMemPool) maybeAcceptTransaction(tx *btcutil.Tx, isNew, rateLimit boo
 // be added to the orphan pool.
 //
 // This function is safe for concurrent access.
-func (mp *txMemPool) MaybeAcceptTransaction(tx *btcutil.Tx, isNew, rateLimit bool) ([]*wire.ShaHash, error) {
+func (mp *txMemPool) MaybeAcceptTransaction(tx *coinutil.Tx, isNew, rateLimit bool) ([]*wire.ShaHash, error) {
 	// Protect concurrent access.
 	mp.Lock()
 	defer mp.Unlock()
@@ -970,7 +970,7 @@ func (mp *txMemPool) ProcessOrphans(hash *wire.ShaHash) {
 // rules, orphan transaction handling, and insertion into the memory pool.
 //
 // This function is safe for concurrent access.
-func (mp *txMemPool) ProcessTransaction(tx *btcutil.Tx, allowOrphan, rateLimit bool) error {
+func (mp *txMemPool) ProcessTransaction(tx *coinutil.Tx, allowOrphan, rateLimit bool) error {
 	// Protect concurrent access.
 	mp.Lock()
 	defer mp.Unlock()
@@ -1107,9 +1107,9 @@ func newTxMemPool(cfg *mempoolConfig) *txMemPool {
 	memPool := &txMemPool{
 		cfg:           *cfg,
 		pool:          make(map[wire.ShaHash]*mempoolTxDesc),
-		orphans:       make(map[wire.ShaHash]*btcutil.Tx),
-		orphansByPrev: make(map[wire.ShaHash]map[wire.ShaHash]*btcutil.Tx),
-		outpoints:     make(map[wire.OutPoint]*btcutil.Tx),
+		orphans:       make(map[wire.ShaHash]*coinutil.Tx),
+		orphansByPrev: make(map[wire.ShaHash]map[wire.ShaHash]*coinutil.Tx),
+		outpoints:     make(map[wire.OutPoint]*coinutil.Tx),
 	}
 	if cfg.EnableAddrIndex {
 		memPool.addrindex = make(map[string]map[wire.ShaHash]struct{})

@@ -13,13 +13,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ldb"
-	_ "github.com/btcsuite/btcd/database/memdb"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/ldb"
+	_ "github.com/conseweb/stcd/database/memdb"
+	"github.com/conseweb/stcd/wire"
 )
 
 // testDbType is the database backend type to use for the tests.
@@ -108,7 +108,7 @@ func chainSetup(dbName string) (*blockchain.BlockChain, func(), error) {
 
 	// Insert the main network genesis block.  This is part of the initial
 	// database setup.
-	genesisBlock := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	genesisBlock := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	_, err := db.InsertBlock(genesisBlock)
 	if err != nil {
 		teardown()
@@ -173,7 +173,7 @@ func loadTxStore(filename string) (blockchain.TxStore, error) {
 		if err != nil {
 			return nil, err
 		}
-		txD.Tx = btcutil.NewTx(&msgTx)
+		txD.Tx = coinutil.NewTx(&msgTx)
 
 		// Transaction hash.
 		txHash := msgTx.TxSha()

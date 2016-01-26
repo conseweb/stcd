@@ -11,7 +11,7 @@ import (
 	"io"
 	"math"
 
-	"github.com/btcsuite/fastsha256"
+	"github.com/conseweb/fastsha256"
 )
 
 // MaxVarIntPayload is the maximum payload size for a variable length integer.

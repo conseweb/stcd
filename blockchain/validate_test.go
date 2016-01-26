@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/wire"
 )
 
 // TestCheckConnectBlock tests the CheckConnectBlock function to ensure it
@@ -35,7 +35,7 @@ func TestCheckConnectBlock(t *testing.T) {
 	// The genesis block should fail to connect since it's already
 	// inserted.
 	genesisBlock := chaincfg.MainNetParams.GenesisBlock
-	err = chain.CheckConnectBlock(btcutil.NewBlock(genesisBlock))
+	err = chain.CheckConnectBlock(coinutil.NewBlock(genesisBlock))
 	if err == nil {
 		t.Errorf("CheckConnectBlock: Did not received expected error")
 	}
@@ -45,7 +45,7 @@ func TestCheckConnectBlock(t *testing.T) {
 // as expected.
 func TestCheckBlockSanity(t *testing.T) {
 	powLimit := chaincfg.MainNetParams.PowLimit
-	block := btcutil.NewBlock(&Block100000)
+	block := coinutil.NewBlock(&Block100000)
 	timeSource := blockchain.NewMedianTime()
 	err := blockchain.CheckBlockSanity(block, powLimit, timeSource)
 	if err != nil {
@@ -107,7 +107,7 @@ func TestCheckSerializedHeight(t *testing.T) {
 	for i, test := range tests {
 		msgTx := coinbaseTx.Copy()
 		msgTx.TxIn[0].SignatureScript = test.sigScript
-		tx := btcutil.NewTx(msgTx)
+		tx := coinutil.NewTx(msgTx)
 
 		err := blockchain.TstCheckSerializedHeight(tx, test.wantHeight)
 		if reflect.TypeOf(err) != reflect.TypeOf(test.err) {

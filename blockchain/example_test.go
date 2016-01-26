@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/memdb"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/memdb"
 )
 
 // This example demonstrates how to create a new chain instance and use
@@ -35,7 +35,7 @@ func ExampleBlockChain_ProcessBlock() {
 	// Insert the main network genesis block.  This is part of the initial
 	// database setup.  Like above, this typically would not be needed when
 	// opening an existing database.
-	genesisBlock := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	genesisBlock := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	_, err = db.InsertBlock(genesisBlock)
 	if err != nil {
 		fmt.Printf("Failed to insert genesis block: %v\n", err)

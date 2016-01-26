@@ -10,12 +10,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/mining"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/mining"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -29,7 +29,7 @@ const (
 
 	// minHighPriority is the minimum priority value that allows a
 	// transaction to be considered high priority.
-	minHighPriority = btcutil.SatoshiPerBitcoin * 144.0 / 250
+	minHighPriority = coinutil.SatoshiPerBitcoin * 144.0 / 250
 
 	// blockHeaderOverhead is the max number of bytes it takes to serialize
 	// a block header and max possible transaction count.
@@ -45,7 +45,7 @@ const (
 // transaction to be prioritized and track dependencies on other transactions
 // which have not been mined into a block yet.
 type txPrioItem struct {
-	tx       *btcutil.Tx
+	tx       *coinutil.Tx
 	fee      int64
 	priority float64
 	feePerKB int64
@@ -193,7 +193,7 @@ func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) ([]byte, e
 //
 // See the comment for NewBlockTemplate for more information about why the nil
 // address handling is useful.
-func createCoinbaseTx(coinbaseScript []byte, nextBlockHeight int32, addr btcutil.Address) (*btcutil.Tx, error) {
+func createCoinbaseTx(coinbaseScript []byte, nextBlockHeight int32, addr coinutil.Address) (*coinutil.Tx, error) {
 	// Create the script to pay to the provided payment address if one was
 	// specified.  Otherwise create a script that allows the coinbase to be
 	// redeemable by anyone.
@@ -227,13 +227,13 @@ func createCoinbaseTx(coinbaseScript []byte, nextBlockHeight int32, addr btcutil
 			activeNetParams.Params),
 		PkScript: pkScript,
 	})
-	return btcutil.NewTx(tx), nil
+	return coinutil.NewTx(tx), nil
 }
 
 // spendTransaction updates the passed transaction store by marking the inputs
 // to the passed transaction as spent.  It also adds the passed transaction to
 // the store at the provided height.
-func spendTransaction(txStore blockchain.TxStore, tx *btcutil.Tx, height int32) error {
+func spendTransaction(txStore blockchain.TxStore, tx *coinutil.Tx, height int32) error {
 	for _, txIn := range tx.MsgTx().TxIn {
 		originHash := &txIn.PreviousOutPoint.Hash
 		originIndex := txIn.PreviousOutPoint.Index
@@ -255,7 +255,7 @@ func spendTransaction(txStore blockchain.TxStore, tx *btcutil.Tx, height int32) 
 
 // logSkippedDeps logs any dependencies which are also skipped as a result of
 // skipping a transaction while generating a block template at the trace level.
-func logSkippedDeps(tx *btcutil.Tx, deps *list.List) {
+func logSkippedDeps(tx *coinutil.Tx, deps *list.List) {
 	if deps == nil {
 		return
 	}
@@ -368,7 +368,7 @@ func medianAdjustedTime(chainState *chainState, timeSource blockchain.MedianTime
 //  |  transactions (while block size   |   |
 //  |  <= policy.BlockMinSize)          |   |
 //   -----------------------------------  --
-func NewBlockTemplate(policy *mining.Policy, server *server, payToAddress btcutil.Address) (*BlockTemplate, error) {
+func NewBlockTemplate(policy *mining.Policy, server *server, payToAddress coinutil.Address) (*BlockTemplate, error) {
 	var txSource mining.TxSource = server.txMemPool
 	blockManager := server.blockManager
 	timeSource := server.timeSource
@@ -414,7 +414,7 @@ func NewBlockTemplate(policy *mining.Policy, server *server, payToAddress btcuti
 	// generated block with reserved space.  Also create a transaction
 	// store to house all of the input transactions so multiple lookups
 	// can be avoided.
-	blockTxns := make([]*btcutil.Tx, 0, len(sourceTxns))
+	blockTxns := make([]*coinutil.Tx, 0, len(sourceTxns))
 	blockTxns = append(blockTxns, coinbaseTx)
 	blockTxStore := make(blockchain.TxStore)
 
@@ -738,7 +738,7 @@ mempoolLoop:
 	// Finally, perform a full check on the created block against the chain
 	// consensus rules to ensure it properly connects to the current best
 	// chain with no issues.
-	block := btcutil.NewBlock(&msgBlock)
+	block := coinutil.NewBlock(&msgBlock)
 	block.SetHeight(nextBlockHeight)
 	if err := blockManager.CheckConnectBlock(block); err != nil {
 		return nil, err
@@ -805,12 +805,12 @@ func UpdateExtraNonce(msgBlock *wire.MsgBlock, blockHeight int32, extraNonce uin
 	}
 	msgBlock.Transactions[0].TxIn[0].SignatureScript = coinbaseScript
 
-	// TODO(davec): A btcutil.Block should use saved in the state to avoid
+	// TODO(davec): A coinutil.Block should use saved in the state to avoid
 	// recalculating all of the other transaction hashes.
 	// block.Transactions[0].InvalidateCache()
 
 	// Recalculate the merkle root with the updated extra nonce.
-	block := btcutil.NewBlock(msgBlock)
+	block := coinutil.NewBlock(msgBlock)
 	merkles := blockchain.BuildMerkleTreeStore(block.Transactions())
 	msgBlock.Header.MerkleRoot = *merkles[len(merkles)-1]
 	return nil

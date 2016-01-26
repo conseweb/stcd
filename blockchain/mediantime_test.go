@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/btcsuite/btcd/blockchain"
+	"github.com/conseweb/stcd/blockchain"
 )
 
 // TestMedianTime tests the medianTime implementation.

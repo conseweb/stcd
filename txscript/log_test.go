@@ -10,7 +10,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/btcsuite/btcd/txscript"
+	"github.com/conseweb/stcd/txscript"
 )
 
 func TestSetLogWriter(t *testing.T) {

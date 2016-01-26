@@ -7,9 +7,9 @@ package database
 import (
 	"errors"
 
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/golangcrypto/ripemd160"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/golangcrypto/ripemd160"
+	"github.com/conseweb/stcd/wire"
 )
 
 // Errors that the various database functions may return.
@@ -48,9 +48,9 @@ type Db interface {
 	// the database.
 	ExistsSha(sha *wire.ShaHash) (exists bool, err error)
 
-	// FetchBlockBySha returns a btcutil Block.  The implementation may
+	// FetchBlockBySha returns a coinutil Block.  The implementation may
 	// cache the underlying data if desired.
-	FetchBlockBySha(sha *wire.ShaHash) (blk *btcutil.Block, err error)
+	FetchBlockBySha(sha *wire.ShaHash) (blk *coinutil.Block, err error)
 
 	// FetchBlockHeightBySha returns the block height for the given hash.
 	FetchBlockHeightBySha(sha *wire.ShaHash) (height int32, err error)
@@ -103,7 +103,7 @@ type Db interface {
 	// into the database.  The first block inserted into the database
 	// will be treated as the genesis block.  Every subsequent block insert
 	// requires the referenced parent block to already exist.
-	InsertBlock(block *btcutil.Block) (height int32, err error)
+	InsertBlock(block *coinutil.Block) (height int32, err error)
 
 	// NewestSha returns the hash and block height of the most recent (end)
 	// block of the block chain.  It will return the zero hash, -1 for
@@ -138,7 +138,7 @@ type Db interface {
 	// NOTE: Values for both `seek` and `limit` MUST be positive.
 	// It will return the array of fetched transactions, along with the amount
 	// of transactions that were actually skipped.
-	FetchTxsForAddr(addr btcutil.Address, skip int, limit int, reverse bool) ([]*TxListReply, int, error)
+	FetchTxsForAddr(addr coinutil.Address, skip int, limit int, reverse bool) ([]*TxListReply, int, error)
 
 	// DeleteAddrIndex deletes the entire addrindex stored within the DB.
 	DeleteAddrIndex() error

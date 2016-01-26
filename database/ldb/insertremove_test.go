@@ -10,15 +10,15 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ldb"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/ldb"
+	"github.com/conseweb/stcd/wire"
 )
 
-var tstBlocks []*btcutil.Block
+var tstBlocks []*coinutil.Block
 
-func loadblocks(t *testing.T) []*btcutil.Block {
+func loadblocks(t *testing.T) []*coinutil.Block {
 	if len(tstBlocks) != 0 {
 		return tstBlocks
 	}

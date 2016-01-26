@@ -29,8 +29,8 @@ wallet functionality and this was a very intentional design decision.  See the
 blog entry [here](https://blog.conformal.com/btcd-not-your-moms-bitcoin-daemon)
 for more details.  This means you can't actually make or receive payments
 directly with btcd.  That functionality is provided by the
-[btcwallet](https://github.com/btcsuite/btcwallet) and
-[btcgui](https://github.com/btcsuite/btcgui) projects which are both under
+[btcwallet](https://github.com/conseweb/btcwallet) and
+[btcgui](https://github.com/conseweb/btcgui) projects which are both under
 active development.
 
 ## Requirements
@@ -41,7 +41,7 @@ active development.
 
 #### Windows - MSI Available
 
-https://github.com/btcsuite/btcd/releases
+https://github.com/conseweb/stcd/releases
 
 #### Linux/BSD/MacOSX/POSIX - Build from Source
 
@@ -62,7 +62,7 @@ recommended that `GOPATH` is set to a directory in your home directory such as
 - Run the following command to obtain btcd, all dependencies, and install it:
 
 ```bash
-$ go get -u github.com/btcsuite/btcd/...
+$ go get -u github.com/conseweb/stcd/...
 ```
 
 - btcd (and utilities) will now be installed in either ```$GOROOT/bin``` or
@@ -81,7 +81,7 @@ Install a newer MSI
 - Run the following command to update btcd, all dependencies, and install it:
 
 ```bash
-$ go get -u -v github.com/btcsuite/btcd/...
+$ go get -u -v github.com/conseweb/stcd/...
 ```
 
 ## Getting Started
@@ -115,12 +115,12 @@ To subscribe to a given list, send email to list+subscribe@opensource.conformal.
 
 ## Issue Tracker
 
-The [integrated github issue tracker](https://github.com/btcsuite/btcd/issues)
+The [integrated github issue tracker](https://github.com/conseweb/stcd/issues)
 is used for this project.
 
 ## Documentation
 
-The documentation is a work-in-progress.  It is located in the [docs](https://github.com/btcsuite/btcd/tree/master/docs) folder.
+The documentation is a work-in-progress.  It is located in the [docs](https://github.com/conseweb/stcd/tree/master/docs) folder.
 
 ## GPG Verification Key
 

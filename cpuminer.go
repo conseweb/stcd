@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/mining"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/mining"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -115,7 +115,7 @@ out:
 
 // submitBlock submits the passed block to network after ensuring it passes all
 // of the consensus validation rules.
-func (m *CPUMiner) submitBlock(block *btcutil.Block) bool {
+func (m *CPUMiner) submitBlock(block *coinutil.Block) bool {
 	m.submitBlockLock.Lock()
 	defer m.submitBlockLock.Unlock()
 
@@ -155,7 +155,7 @@ func (m *CPUMiner) submitBlock(block *btcutil.Block) bool {
 	// The block was accepted.
 	coinbaseTx := block.MsgBlock().Transactions[0].TxOut[0]
 	minrLog.Infof("Block submitted via CPU miner accepted (hash %s, "+
-		"amount %v)", block.Sha(), btcutil.Amount(coinbaseTx.Value))
+		"amount %v)", block.Sha(), coinutil.Amount(coinbaseTx.Value))
 	return true
 }
 
@@ -319,7 +319,7 @@ out:
 		// a new block template can be generated.  When the return is
 		// true a solution was found, so submit the solved block.
 		if m.solveBlock(template.block, curHeight+1, ticker, quit) {
-			block := btcutil.NewBlock(template.block)
+			block := coinutil.NewBlock(template.block)
 			m.submitBlock(block)
 		}
 	}
@@ -581,7 +581,7 @@ func (m *CPUMiner) GenerateNBlocks(n uint32) ([]*wire.ShaHash, error) {
 		// a new block template can be generated.  When the return is
 		// true a solution was found, so submit the solved block.
 		if m.solveBlock(template.block, curHeight+1, ticker, nil) {
-			block := btcutil.NewBlock(template.block)
+			block := coinutil.NewBlock(template.block)
 			m.submitBlock(block)
 			blockHashes[i] = block.Sha()
 			i++

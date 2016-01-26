@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -28,7 +28,7 @@ type testContext struct {
 	db          database.Db
 	blockHeight int32
 	blockHash   *wire.ShaHash
-	block       *btcutil.Block
+	block       *coinutil.Block
 	useSpends   bool
 }
 
@@ -612,14 +612,14 @@ func testInterface(t *testing.T, dbType string) {
 	   - Close()
 	   - DropAfterBlockBySha(*wire.ShaHash) (err error)
 	   x ExistsSha(sha *wire.ShaHash) (exists bool)
-	   x FetchBlockBySha(sha *wire.ShaHash) (blk *btcutil.Block, err error)
+	   x FetchBlockBySha(sha *wire.ShaHash) (blk *coinutil.Block, err error)
 	   x FetchBlockShaByHeight(height int32) (sha *wire.ShaHash, err error)
 	   - FetchHeightRange(startHeight, endHeight int32) (rshalist []wire.ShaHash, err error)
 	   x ExistsTxSha(sha *wire.ShaHash) (exists bool)
 	   x FetchTxBySha(txsha *wire.ShaHash) ([]*TxListReply, error)
 	   x FetchTxByShaList(txShaList []*wire.ShaHash) []*TxListReply
 	   x FetchUnSpentTxByShaList(txShaList []*wire.ShaHash) []*TxListReply
-	   x InsertBlock(block *btcutil.Block) (height int32, err error)
+	   x InsertBlock(block *coinutil.Block) (height int32, err error)
 	   x NewestSha() (sha *wire.ShaHash, height int32, err error)
 	   - RollbackClose()
 	   - Sync()

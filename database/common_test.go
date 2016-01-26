@@ -14,12 +14,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ldb"
-	_ "github.com/btcsuite/btcd/database/memdb"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/ldb"
+	_ "github.com/conseweb/stcd/database/memdb"
+	"github.com/conseweb/stcd/wire"
 )
 
 var (
@@ -29,7 +29,7 @@ var (
 	// savedBlocks is used to store blocks loaded from the blockDataFile
 	// so multiple invocations to loadBlocks from the various test functions
 	// do not have to reload them from disk.
-	savedBlocks []*btcutil.Block
+	savedBlocks []*coinutil.Block
 
 	// blockDataFile is the path to a file containing the first 256 blocks
 	// of the block chain.
@@ -140,7 +140,7 @@ func setupDB(dbType, dbName string) (database.Db, func(), error) {
 
 	// Insert the main network genesis block.  This is part of the initial
 	// database setup.
-	genesisBlock := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	genesisBlock := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	_, err = db.InsertBlock(genesisBlock)
 	if err != nil {
 		teardown()
@@ -153,7 +153,7 @@ func setupDB(dbType, dbName string) (database.Db, func(), error) {
 
 // loadBlocks loads the blocks contained in the testdata directory and returns
 // a slice of them.
-func loadBlocks(t *testing.T) ([]*btcutil.Block, error) {
+func loadBlocks(t *testing.T) ([]*coinutil.Block, error) {
 	if len(savedBlocks) != 0 {
 		return savedBlocks, nil
 	}
@@ -178,8 +178,8 @@ func loadBlocks(t *testing.T) ([]*btcutil.Block, error) {
 	}()
 
 	// Set the first block as the genesis block.
-	blocks := make([]*btcutil.Block, 0, 256)
-	genesis := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	blocks := make([]*coinutil.Block, 0, 256)
+	genesis := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	blocks = append(blocks, genesis)
 
 	for height := int64(1); err == nil; height++ {
@@ -208,7 +208,7 @@ func loadBlocks(t *testing.T) ([]*btcutil.Block, error) {
 		// read block
 		dr.Read(rbytes)
 
-		block, err := btcutil.NewBlockFromBytes(rbytes)
+		block, err := coinutil.NewBlockFromBytes(rbytes)
 		if err != nil {
 			t.Errorf("failed to parse block %v", height)
 			return nil, err

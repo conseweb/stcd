@@ -8,29 +8,29 @@ import (
 	"bytes"
 	"encoding/binary"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/goleveldb/leveldb"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/goleveldb/leveldb"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
-// FetchBlockBySha - return a btcutil Block
-func (db *LevelDb) FetchBlockBySha(sha *wire.ShaHash) (blk *btcutil.Block, err error) {
+// FetchBlockBySha - return a coinutil Block
+func (db *LevelDb) FetchBlockBySha(sha *wire.ShaHash) (blk *coinutil.Block, err error) {
 	db.dbLock.Lock()
 	defer db.dbLock.Unlock()
 	return db.fetchBlockBySha(sha)
 }
 
-// fetchBlockBySha - return a btcutil Block
+// fetchBlockBySha - return a coinutil Block
 // Must be called with db lock held.
-func (db *LevelDb) fetchBlockBySha(sha *wire.ShaHash) (blk *btcutil.Block, err error) {
+func (db *LevelDb) fetchBlockBySha(sha *wire.ShaHash) (blk *coinutil.Block, err error) {
 
 	buf, height, err := db.fetchSha(sha)
 	if err != nil {
 		return
 	}
 
-	blk, err = btcutil.NewBlockFromBytes(buf)
+	blk, err = coinutil.NewBlockFromBytes(buf)
 	if err != nil {
 		return
 	}

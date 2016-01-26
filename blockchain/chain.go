@@ -13,11 +13,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -101,7 +101,7 @@ func newBlockNode(blockHeader *wire.BlockHeader, blockSha *wire.ShaHash, height 
 // is a normal block plus an expiration time to prevent caching the orphan
 // forever.
 type orphanBlock struct {
-	block      *btcutil.Block
+	block      *coinutil.Block
 	expiration time.Time
 }
 
@@ -155,11 +155,11 @@ type BlockChain struct {
 	prevOrphans         map[wire.ShaHash][]*orphanBlock
 	oldestOrphan        *orphanBlock
 	orphanLock          sync.RWMutex
-	blockCache          map[wire.ShaHash]*btcutil.Block
+	blockCache          map[wire.ShaHash]*coinutil.Block
 	noVerify            bool
 	noCheckpoints       bool
 	nextCheckpoint      *chaincfg.Checkpoint
-	checkpointBlock     *btcutil.Block
+	checkpointBlock     *coinutil.Block
 	sigCache            *txscript.SigCache
 }
 
@@ -275,7 +275,7 @@ func (b *BlockChain) removeOrphanBlock(orphan *orphanBlock) {
 // It also imposes a maximum limit on the number of outstanding orphan
 // blocks and will remove the oldest received orphan block if the limit is
 // exceeded.
-func (b *BlockChain) addOrphanBlock(block *btcutil.Block) {
+func (b *BlockChain) addOrphanBlock(block *coinutil.Block) {
 	// Remove expired orphan blocks.
 	for _, oBlock := range b.orphans {
 		if time.Now().After(oBlock.expiration) {
@@ -469,7 +469,7 @@ func (b *BlockChain) loadBlockNode(hash *wire.ShaHash) (*blockNode, error) {
 // block chain, it simply returns it.  Otherwise, it loads the previous block
 // from the block database, creates a new block node from it, and returns it.
 // The returned node will be nil if the genesis block is passed.
-func (b *BlockChain) getPrevNodeFromBlock(block *btcutil.Block) (*blockNode, error) {
+func (b *BlockChain) getPrevNodeFromBlock(block *coinutil.Block) (*blockNode, error) {
 	// Genesis block.
 	prevHash := &block.MsgBlock().Header.PrevBlock
 	if prevHash.IsEqual(zeroHash) {
@@ -744,7 +744,7 @@ func (b *BlockChain) getReorganizeNodes(node *blockNode) (*list.List, *list.List
 
 // connectBlock handles connecting the passed node/block to the end of the main
 // (best) chain.
-func (b *BlockChain) connectBlock(node *blockNode, block *btcutil.Block) error {
+func (b *BlockChain) connectBlock(node *blockNode, block *coinutil.Block) error {
 	// Make sure it's extending the end of the best chain.
 	prevHash := &block.MsgBlock().Header.PrevBlock
 	if b.bestChain != nil && !prevHash.IsEqual(b.bestChain.hash) {
@@ -777,7 +777,7 @@ func (b *BlockChain) connectBlock(node *blockNode, block *btcutil.Block) error {
 
 // disconnectBlock handles disconnecting the passed node/block from the end of
 // the main (best) chain.
-func (b *BlockChain) disconnectBlock(node *blockNode, block *btcutil.Block) error {
+func (b *BlockChain) disconnectBlock(node *blockNode, block *coinutil.Block) error {
 	// Make sure the node being disconnected is the end of the best chain.
 	if b.bestChain == nil || !node.hash.IsEqual(b.bestChain.hash) {
 		return fmt.Errorf("disconnectBlock must be called with the " +
@@ -910,7 +910,7 @@ func (b *BlockChain) reorganizeChain(detachNodes, attachNodes *list.List, flags 
 //  - BFDryRun: Prevents the block from being connected and avoids modifying the
 //    state of the memory chain index.  Also, any log messages related to
 //    modifying the state are avoided.
-func (b *BlockChain) connectBestChain(node *blockNode, block *btcutil.Block, flags BehaviorFlags) error {
+func (b *BlockChain) connectBestChain(node *blockNode, block *coinutil.Block, flags BehaviorFlags) error {
 	fastAdd := flags&BFFastAdd == BFFastAdd
 	dryRun := flags&BFDryRun == BFDryRun
 
@@ -1092,7 +1092,7 @@ func New(db database.Db, params *chaincfg.Params, c NotificationCallback, sigCac
 		depNodes:            make(map[wire.ShaHash][]*blockNode),
 		orphans:             make(map[wire.ShaHash]*orphanBlock),
 		prevOrphans:         make(map[wire.ShaHash][]*orphanBlock),
-		blockCache:          make(map[wire.ShaHash]*btcutil.Block),
+		blockCache:          make(map[wire.ShaHash]*coinutil.Block),
 	}
 	return &b
 }

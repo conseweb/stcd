@@ -5,7 +5,7 @@ database
 (https://travis-ci.org/btcsuite/btcd)  [![ISC License]
 (http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)]
-(http://godoc.org/github.com/btcsuite/btcd/database)
+(http://godoc.org/github.com/conseweb/stcd/database)
 
 Package database provides a database interface for the bitcoin block chain and
 transactions.
@@ -16,24 +16,24 @@ one entity can have the database open at a time (for most database backends),
 and that entity will be btcd.
 
 When a client wants programmatic access to the data provided by btcd, they'll
-likely want to use the [btcrpcclient](https://github.com/btcsuite/btcrpcclient)
+likely want to use the [btcrpcclient](https://github.com/conseweb/btcrpcclient)
 package which makes use of the [JSON-RPC API]
-(https://github.com/btcsuite/btcd/tree/master/docs/json_rpc_api.md).
+(https://github.com/conseweb/stcd/tree/master/docs/json_rpc_api.md).
 
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/btcsuite/btcd/database
+$ go get -u github.com/conseweb/stcd/database
 ```
 
 ## Examples
 
 * [CreateDB Example]
-  (http://godoc.org/github.com/btcsuite/btcd/database#example-CreateDB)  
+  (http://godoc.org/github.com/conseweb/stcd/database#example-CreateDB)  
   Demonstrates creating a new database and inserting the genesis block into it.
 
 * [NewestSha Example]
-  (http://godoc.org/github.com/btcsuite/btcd/database#example-Db--NewestSha)  
+  (http://godoc.org/github.com/conseweb/stcd/database#example-Db--NewestSha)  
   Demonstrates  querying the database for the most recent best block height and
   hash.
 

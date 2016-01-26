@@ -9,12 +9,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/ldb"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	flags "github.com/btcsuite/go-flags"
+	"github.com/conseweb/coinutil"
+	flags "github.com/conseweb/go-flags"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/ldb"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -25,7 +25,7 @@ const (
 )
 
 var (
-	btcdHomeDir     = btcutil.AppDataDir("xcoind", false)
+	btcdHomeDir     = coinutil.AppDataDir("xcoind", false)
 	defaultDataDir  = filepath.Join(btcdHomeDir, "data")
 	knownDbTypes    = database.SupportedDBs()
 	activeNetParams = &chaincfg.MainNetParams

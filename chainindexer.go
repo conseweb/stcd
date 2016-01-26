@@ -11,12 +11,12 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/golangcrypto/ripemd160"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/golangcrypto/ripemd160"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 type indexState int
@@ -46,14 +46,14 @@ var numCatchUpWorkers = runtime.NumCPU() * 3
 
 // indexBlockMsg packages a request to have the addresses of a block indexed.
 type indexBlockMsg struct {
-	blk  *btcutil.Block
+	blk  *coinutil.Block
 	done chan struct{}
 }
 
 // writeIndexReq represents a request to have a completed address index
 // committed to the database.
 type writeIndexReq struct {
-	blk       *btcutil.Block
+	blk       *coinutil.Block
 	addrIndex database.BlockAddrIndex
 }
 
@@ -256,7 +256,7 @@ fin:
 
 // UpdateAddressIndex asynchronously queues a newly solved block to have its
 // transactions indexed by address.
-func (a *addrIndexer) UpdateAddressIndex(block *btcutil.Block) {
+func (a *addrIndexer) UpdateAddressIndex(block *coinutil.Block) {
 	go func() {
 		job := &indexBlockMsg{blk: block}
 		a.addrIndexJobs <- job
@@ -439,7 +439,7 @@ func indexScriptPubKey(addrIndex database.BlockAddrIndex, scriptPubKey []byte,
 			// Otherwise, could be a payToPubKey or an OP_RETURN, so we'll
 			// make a hash160 out of it.
 		} else {
-			copy(indexKey[:], btcutil.Hash160(data))
+			copy(indexKey[:], coinutil.Hash160(data))
 		}
 
 		addrIndex[indexKey] = append(addrIndex[indexKey], locInBlock)
@@ -449,7 +449,7 @@ func indexScriptPubKey(addrIndex database.BlockAddrIndex, scriptPubKey []byte,
 
 // indexBlockAddrs returns a populated index of the all the transactions in the
 // passed block based on the addresses involved in each transaction.
-func (a *addrIndexer) indexBlockAddrs(blk *btcutil.Block) (database.BlockAddrIndex, error) {
+func (a *addrIndexer) indexBlockAddrs(blk *coinutil.Block) (database.BlockAddrIndex, error) {
 	addrIndex := make(database.BlockAddrIndex)
 	txLocs, err := blk.TxLoc()
 	if err != nil {

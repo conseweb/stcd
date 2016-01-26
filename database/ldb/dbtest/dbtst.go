@@ -4,8 +4,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/btcsuite/goleveldb/leveldb"
-	"github.com/btcsuite/goleveldb/leveldb/opt"
+	"github.com/conseweb/goleveldb/leveldb"
+	"github.com/conseweb/goleveldb/leveldb/opt"
 )
 
 type tst struct {

@@ -7,15 +7,15 @@ package blockchain
 import (
 	"fmt"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 // TxData contains contextual information about transactions such as which block
 // they were found in and whether or not the outputs are spent.
 type TxData struct {
-	Tx          *btcutil.Tx
+	Tx          *coinutil.Tx
 	Hash        *wire.ShaHash
 	BlockHeight int32
 	Spent       []bool
@@ -31,7 +31,7 @@ type TxStore map[wire.ShaHash]*TxData
 // connectTransactions updates the passed map by applying transaction and
 // spend information for all the transactions in the passed block.  Only
 // transactions in the passed map are updated.
-func connectTransactions(txStore TxStore, block *btcutil.Block) error {
+func connectTransactions(txStore TxStore, block *coinutil.Block) error {
 	// Loop through all of the transactions in the block to see if any of
 	// them are ones we need to update and spend based on the results map.
 	for _, tx := range block.Transactions() {
@@ -64,7 +64,7 @@ func connectTransactions(txStore TxStore, block *btcutil.Block) error {
 // disconnectTransactions updates the passed map by undoing transaction and
 // spend information for all transactions in the passed block.  Only
 // transactions in the passed map are updated.
-func disconnectTransactions(txStore TxStore, block *btcutil.Block) error {
+func disconnectTransactions(txStore TxStore, block *coinutil.Block) error {
 	// Loop through all of the transactions in the block to see if any of
 	// them are ones that need to be undone based on the transaction store.
 	for _, tx := range block.Transactions() {
@@ -145,7 +145,7 @@ func fetchTxStoreMain(db database.Db, txSet map[wire.ShaHash]struct{}, includeSp
 		// cause subtle errors, so avoid the potential altogether.
 		txD.Err = txReply.Err
 		if txReply.Err == nil {
-			txD.Tx = btcutil.NewTx(txReply.Tx)
+			txD.Tx = coinutil.NewTx(txReply.Tx)
 			txD.BlockHeight = txReply.Height
 			txD.Spent = make([]bool, len(txReply.TxSpent))
 			copy(txD.Spent, txReply.TxSpent)
@@ -234,7 +234,7 @@ func (b *BlockChain) fetchTxStore(node *blockNode, txSet map[wire.ShaHash]struct
 // fetchInputTransactions fetches the input transactions referenced by the
 // transactions in the given block from its point of view.  See fetchTxList
 // for more details on what the point of view entails.
-func (b *BlockChain) fetchInputTransactions(node *blockNode, block *btcutil.Block) (TxStore, error) {
+func (b *BlockChain) fetchInputTransactions(node *blockNode, block *coinutil.Block) (TxStore, error) {
 	// Build a map of in-flight transactions because some of the inputs in
 	// this block could be referencing other transactions earlier in this
 	// block which are not yet in the chain.
@@ -300,7 +300,7 @@ func (b *BlockChain) fetchInputTransactions(node *blockNode, block *btcutil.Bloc
 // passed transaction from the point of view of the end of the main chain.  It
 // also attempts to fetch the transaction itself so the returned TxStore can be
 // examined for duplicate transactions.
-func (b *BlockChain) FetchTransactionStore(tx *btcutil.Tx, includeSpent bool) (TxStore, error) {
+func (b *BlockChain) FetchTransactionStore(tx *coinutil.Tx, includeSpent bool) (TxStore, error) {
 	// Create a set of needed transactions from the transactions referenced
 	// by the inputs of the passed transaction.  Also, add the passed
 	// transaction itself as a way for the caller to detect duplicates.

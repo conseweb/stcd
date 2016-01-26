@@ -7,10 +7,10 @@ package database_test
 import (
 	"fmt"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	_ "github.com/btcsuite/btcd/database/memdb"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	_ "github.com/conseweb/stcd/database/memdb"
 )
 
 // This example demonstrates creating a new database and inserting the genesis
@@ -20,8 +20,8 @@ func ExampleCreateDB() {
 	// Ordinarily this would be whatever driver(s) your application
 	// requires.
 	// import (
-	//	"github.com/btcsuite/btcd/database"
-	// 	_ "github.com/btcsuite/btcd/database/memdb"
+	//	"github.com/conseweb/stcd/database"
+	// 	_ "github.com/conseweb/stcd/database/memdb"
 	// )
 
 	// Create a database and schedule it to be closed on exit.  This example
@@ -37,7 +37,7 @@ func ExampleCreateDB() {
 	defer db.Close()
 
 	// Insert the main network genesis block.
-	genesis := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	genesis := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	newHeight, err := db.InsertBlock(genesis)
 	if err != nil {
 		fmt.Println(err)
@@ -58,7 +58,7 @@ func exampleLoadDB() (database.Db, error) {
 	}
 
 	// Insert the main network genesis block.
-	genesis := btcutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+	genesis := coinutil.NewBlock(chaincfg.MainNetParams.GenesisBlock)
 	_, err = db.InsertBlock(genesis)
 	if err != nil {
 		return nil, err

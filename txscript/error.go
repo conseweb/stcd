@@ -145,7 +145,7 @@ var (
 	ErrInvalidIndex = errors.New("invalid input index")
 
 	// ErrUnsupportedAddress is returned when a concrete type that
-	// implements a btcutil.Address is not a supported type.
+	// implements a coinutil.Address is not a supported type.
 	ErrUnsupportedAddress = errors.New("unsupported address type")
 
 	// ErrBadNumRequired is returned from MultiSigScript when nrequired is

@@ -9,8 +9,8 @@ import (
 	"crypto/rand"
 	"sync"
 
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/btcsuite/btcd/wire"
+	"github.com/conseweb/stcd/btcec"
+	"github.com/conseweb/stcd/wire"
 )
 
 // sigInfo represents an entry in the SigCache. Entries in the sigcache are a

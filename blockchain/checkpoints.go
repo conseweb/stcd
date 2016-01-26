@@ -7,10 +7,10 @@ package blockchain
 import (
 	"fmt"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 // CheckpointConfirmations is the number of blocks before the end of the current
@@ -83,7 +83,7 @@ func (b *BlockChain) verifyCheckpoint(height int32, hash *wire.ShaHash) bool {
 // available in the downloaded portion of the block chain and returns the
 // associated block.  It returns nil if a checkpoint can't be found (this should
 // really only happen for blocks before the first checkpoint).
-func (b *BlockChain) findPreviousCheckpoint() (*btcutil.Block, error) {
+func (b *BlockChain) findPreviousCheckpoint() (*coinutil.Block, error) {
 	if b.noCheckpoints || len(b.chainParams.Checkpoints) == 0 {
 		return nil, nil
 	}
@@ -187,7 +187,7 @@ func (b *BlockChain) findPreviousCheckpoint() (*btcutil.Block, error) {
 
 // isNonstandardTransaction determines whether a transaction contains any
 // scripts which are not one of the standard types.
-func isNonstandardTransaction(tx *btcutil.Tx) bool {
+func isNonstandardTransaction(tx *coinutil.Tx) bool {
 	// TODO(davec): Should there be checks for the input signature scripts?
 
 	// Check all of the output public key scripts for non-standard scripts.
@@ -215,7 +215,7 @@ func isNonstandardTransaction(tx *btcutil.Tx) bool {
 //
 // The intent is that candidates are reviewed by a developer to make the final
 // decision and then manually added to the list of checkpoints for a network.
-func (b *BlockChain) IsCheckpointCandidate(block *btcutil.Block) (bool, error) {
+func (b *BlockChain) IsCheckpointCandidate(block *coinutil.Block) (bool, error) {
 	// Checkpoints must be enabled.
 	if b.noCheckpoints {
 		return false, fmt.Errorf("checkpoints are disabled")

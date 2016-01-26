@@ -10,9 +10,9 @@ import (
 	"math"
 	"sync"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 // Errors that the various database functions may return.
@@ -212,13 +212,13 @@ func (db *MemDb) ExistsSha(sha *wire.ShaHash) (bool, error) {
 	return false, nil
 }
 
-// FetchBlockBySha returns a btcutil.Block.  The implementation may cache the
+// FetchBlockBySha returns a coinutil.Block.  The implementation may cache the
 // underlying data if desired.  This is part of the database.Db interface
 // implementation.
 //
 // This implementation does not use any additional cache since the entire
 // database is already in memory.
-func (db *MemDb) FetchBlockBySha(sha *wire.ShaHash) (*btcutil.Block, error) {
+func (db *MemDb) FetchBlockBySha(sha *wire.ShaHash) (*coinutil.Block, error) {
 	db.Lock()
 	defer db.Unlock()
 
@@ -227,7 +227,7 @@ func (db *MemDb) FetchBlockBySha(sha *wire.ShaHash) (*btcutil.Block, error) {
 	}
 
 	if blockHeight, exists := db.blocksBySha[*sha]; exists {
-		block := btcutil.NewBlock(db.blocks[int(blockHeight)])
+		block := coinutil.NewBlock(db.blocks[int(blockHeight)])
 		block.SetHeight(blockHeight)
 		return block, nil
 	}
@@ -515,7 +515,7 @@ func (db *MemDb) FetchUnSpentTxByShaList(txShaList []*wire.ShaHash) []*database.
 // genesis block.  Every subsequent block insert requires the referenced parent
 // block to already exist.  This is part of the database.Db interface
 // implementation.
-func (db *MemDb) InsertBlock(block *btcutil.Block) (int32, error) {
+func (db *MemDb) InsertBlock(block *coinutil.Block) (int32, error) {
 	db.Lock()
 	defer db.Unlock()
 
@@ -690,7 +690,7 @@ func (db *MemDb) UpdateAddrIndexForBlock(*wire.ShaHash, int32,
 
 // FetchTxsForAddr isn't currently implemented. This is a part of the database.Db
 // interface implementation.
-func (db *MemDb) FetchTxsForAddr(btcutil.Address, int, int, bool) ([]*database.TxListReply, int, error) {
+func (db *MemDb) FetchTxsForAddr(coinutil.Address, int, int, bool) ([]*database.TxListReply, int, error) {
 	return nil, 0, database.ErrNotImplemented
 }
 

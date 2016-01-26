@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 func Test_dupTx(t *testing.T) {
@@ -134,7 +134,7 @@ out:
 
 	mblk.AddTransaction(&tx)
 
-	blk := btcutil.NewBlock(mblk)
+	blk := coinutil.NewBlock(mblk)
 
 	fetchList := []*wire.ShaHash{hash}
 	listReply := db.FetchUnSpentTxByShaList(fetchList)

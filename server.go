@@ -19,16 +19,16 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/btcsuite/btcd/addrmgr"
-	"github.com/btcsuite/btcd/blockchain"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/mining"
-	"github.com/btcsuite/btcd/peer"
-	"github.com/btcsuite/btcd/txscript"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/bloom"
+	"github.com/conseweb/coinutil"
+	"github.com/conseweb/coinutil/bloom"
+	"github.com/conseweb/stcd/addrmgr"
+	"github.com/conseweb/stcd/blockchain"
+	"github.com/conseweb/stcd/chaincfg"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/mining"
+	"github.com/conseweb/stcd/peer"
+	"github.com/conseweb/stcd/txscript"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (
@@ -181,7 +181,7 @@ type server struct {
 	addrIndexer          *addrIndexer
 	txMemPool            *txMemPool
 	cpuMiner             *CPUMiner
-	relayNtfnChan        chan *btcutil.Tx
+	relayNtfnChan        chan *coinutil.Tx
 	modifyRebroadcastInv chan interface{}
 	pendingPeers         chan *serverPeer
 	newPeers             chan *serverPeer
@@ -399,9 +399,9 @@ func (sp *serverPeer) OnMemPool(p *peer.Peer, msg *wire.MsgMemPool) {
 // transactions don't rely on the previous one in a linear fashion like blocks.
 func (sp *serverPeer) OnTx(p *peer.Peer, msg *wire.MsgTx) {
 	// Add the transaction to the known inventory for the peer.
-	// Convert the raw MsgTx to a btcutil.Tx which provides some convenience
+	// Convert the raw MsgTx to a coinutil.Tx which provides some convenience
 	// methods and things such as hash caching.
-	tx := btcutil.NewTx(msg)
+	tx := coinutil.NewTx(msg)
 	iv := wire.NewInvVect(wire.InvTypeTx, tx.Sha())
 	p.AddKnownInventory(iv)
 
@@ -417,9 +417,9 @@ func (sp *serverPeer) OnTx(p *peer.Peer, msg *wire.MsgTx) {
 // OnBlock is invoked when a peer receives a block bitcoin message.  It
 // blocks until the bitcoin block has been fully processed.
 func (sp *serverPeer) OnBlock(p *peer.Peer, msg *wire.MsgBlock, buf []byte) {
-	// Convert the raw MsgBlock to a btcutil.Block which provides some
+	// Convert the raw MsgBlock to a coinutil.Block which provides some
 	// convenience methods and things such as hash caching.
-	block := btcutil.NewBlockFromBlockAndBytes(msg, buf)
+	block := coinutil.NewBlockFromBlockAndBytes(msg, buf)
 
 	// Add the block to the known inventory for the peer.
 	iv := wire.NewInvVect(wire.InvTypeBlock, block.Sha())
@@ -1178,7 +1178,7 @@ func (s *server) handleRelayInvMsg(state *peerState, msg relayMsg) {
 			// Don't relay the transaction if there is a bloom
 			// filter loaded and the transaction doesn't match it.
 			if sp.filter.IsLoaded() {
-				tx, ok := msg.data.(*btcutil.Tx)
+				tx, ok := msg.data.(*coinutil.Tx)
 				if !ok {
 					peerLog.Warnf("Underlying data for tx" +
 						" inv relay is not a transaction")
@@ -2354,7 +2354,7 @@ func newServer(listenAddrs []string, db database.Db, chainParams *chaincfg.Param
 		relayInv:             make(chan relayMsg, cfg.MaxPeers),
 		broadcast:            make(chan broadcastMsg, cfg.MaxPeers),
 		quit:                 make(chan struct{}),
-		relayNtfnChan:        make(chan *btcutil.Tx, cfg.MaxPeers),
+		relayNtfnChan:        make(chan *coinutil.Tx, cfg.MaxPeers),
 		modifyRebroadcastInv: make(chan interface{}),
 		peerHeightsUpdate:    make(chan updatePeerHeightsMsg),
 		nat:                  nat,

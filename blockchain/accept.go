@@ -4,7 +4,7 @@
 
 package blockchain
 
-import "github.com/btcsuite/btcutil"
+import "github.com/conseweb/coinutil"
 
 // maybeAcceptBlock potentially accepts a block into the memory block chain.
 // It performs several validation checks which depend on its position within
@@ -17,7 +17,7 @@ import "github.com/btcsuite/btcutil"
 //
 // The flags are also passed to checkBlockContext and connectBestChain.  See
 // their documentation for how the flags modify their behavior.
-func (b *BlockChain) maybeAcceptBlock(block *btcutil.Block, flags BehaviorFlags) error {
+func (b *BlockChain) maybeAcceptBlock(block *coinutil.Block, flags BehaviorFlags) error {
 	dryRun := flags&BFDryRun == BFDryRun
 
 	// Get a block node for the block previous to this one.  Will be nil

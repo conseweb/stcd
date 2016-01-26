@@ -5,7 +5,7 @@
 package blockchain
 
 import (
-	"github.com/btcsuite/btcd/wire"
+	"github.com/conseweb/stcd/wire"
 )
 
 // BlockLocator is used to help locate a specific block.  The algorithm for

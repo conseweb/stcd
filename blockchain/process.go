@@ -7,8 +7,8 @@ package blockchain
 import (
 	"fmt"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
+	"github.com/conseweb/stcd/wire"
 )
 
 // BehaviorFlags is a bitmask defining tweaks to the normal behavior when

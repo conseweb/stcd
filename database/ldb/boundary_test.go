@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 // we need to test for an empty database and make certain it returns the proper

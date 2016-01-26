@@ -11,12 +11,12 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/btcsuite/btcd/database"
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btclog"
+	"github.com/conseweb/btclog"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/goleveldb/leveldb"
 	"github.com/conseweb/goleveldb/leveldb/opt"
+	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (

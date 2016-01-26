@@ -7,9 +7,9 @@ package database
 import (
 	"errors"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/golangcrypto/ripemd160"
+	"github.com/conseweb/stcd/wire"
 )
 
 // Errors that the various database functions may return.

@@ -13,13 +13,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/stcd/blockchain"
 	"github.com/conseweb/stcd/chaincfg"
 	"github.com/conseweb/stcd/database"
 	_ "github.com/conseweb/stcd/database/ldb"
 	_ "github.com/conseweb/stcd/database/memdb"
+	"github.com/conseweb/stcd/wire"
 )
 
 // testDbType is the database backend type to use for the tests.

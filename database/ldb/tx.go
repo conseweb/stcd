@@ -9,13 +9,13 @@ import (
 	"encoding/binary"
 	"errors"
 
-	"github.com/btcsuite/btcd/wire"
 	"github.com/conseweb/coinutil"
 	"github.com/conseweb/golangcrypto/ripemd160"
 	"github.com/conseweb/goleveldb/leveldb"
 	"github.com/conseweb/goleveldb/leveldb/iterator"
 	"github.com/conseweb/goleveldb/leveldb/util"
 	"github.com/conseweb/stcd/database"
+	"github.com/conseweb/stcd/wire"
 )
 
 const (

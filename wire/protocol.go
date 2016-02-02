@@ -100,15 +100,15 @@ func (f ServiceFlag) String() string {
 	return s
 }
 
-// StonecoinNet represents which bitcoin network a message belongs to.
+// StonecoinNet represents which stonecoin network a message belongs to.
 type StonecoinNet uint32
 
-// Constants used to indicate the message bitcoin network.  They can also be
+// Constants used to indicate the message stonecoin network.  They can also be
 // used to seek to the next message when a stream's state is unknown, but
 // this package does not provide that functionality since it's generally a
 // better idea to simply disconnect clients that are misbehaving over TCP.
 const (
-	// MainNet represents the main bitcoin network.
+	// MainNet represents the main stonecoin network.
 	// Network identifier
 	MainNet StonecoinNet = 0x7f9ba2e7
 
@@ -122,7 +122,7 @@ const (
 	SimNet StonecoinNet = 0x51d15cf4
 )
 
-// bnStrings is a map of bitcoin networks back to their constant names for
+// bnStrings is a map of stonecoin networks back to their constant names for
 // pretty printing.
 var bnStrings = map[StonecoinNet]string{
 	MainNet:  "MainNet",
